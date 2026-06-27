@@ -152,6 +152,31 @@
     color:var(--muted);text-align:center;padding:24px;font-size:.92rem}
   @media(max-width:560px){ .viewer3d{height:240px} }
 
+  /* ---- pannello pieghe 3D dentro la procedura guidata ---- */
+  .guide-body{display:flex;flex:1;min-height:0}
+  .fold3d{position:relative;flex:1 1 46%;min-width:0;
+    background:radial-gradient(130% 130% at 50% 0%,#16264a 0%,#0e1830 60%);
+    border-right:1px solid var(--line)}
+  .fold3d canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+  .fold3d canvas:active{cursor:grabbing}
+  .fold3d .f3-tag{position:absolute;left:14px;top:12px;color:var(--accent);font-size:.8rem;
+    border:1px solid var(--line);padding:4px 12px;border-radius:999px;background:rgba(14,24,48,.7);pointer-events:none}
+  .fold3d .f3-hint{position:absolute;right:14px;bottom:12px;color:var(--muted);font-size:.8rem;pointer-events:none}
+  .fold3d .f3-replay{position:absolute;right:14px;top:12px;z-index:2;cursor:pointer;font:inherit;font-size:.82rem;
+    display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:999px;
+    border:1px solid var(--line);background:rgba(14,24,48,.78);color:var(--ink);transition:.15s}
+  .fold3d .f3-replay:hover{border-color:var(--accent);color:var(--accent)}
+  .fold3d .f3-replay:active{transform:scale(.96)}
+  .fold3d .f3-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--muted);text-align:center;padding:24px;font-size:.9rem}
+  .guide-body .stage{flex:1 1 54%}
+  @media(max-width:760px){
+    .guide-body{flex-direction:column}
+    .fold3d{flex:0 0 40%;border-right:none;border-bottom:1px solid var(--line)}
+    .guide-body .stage{flex:1 1 auto}
+    .fold3d .f3-hint{display:none}
+  }
+
   /* ---- scheda PDF A4 stampabile ---- */
   .print-sheet{display:none}
   @media print{
@@ -689,13 +714,21 @@
     <span class="ov-spacer"></span>
     <button class="ov-close" id="gClose" aria-label="Chiudi">✕</button>
   </div>
-  <div class="stage" id="gStage">
-    <div class="zc" id="gZc"></div>
-    <div class="zoomhint">Doppio click / rotella: zoom · trascina: sposta · pizzica su touch</div>
-    <div class="zoombar">
-      <button data-z="out" aria-label="Riduci">−</button>
-      <button data-z="reset" aria-label="Reimposta">⟳</button>
-      <button data-z="in" aria-label="Ingrandisci">+</button>
+  <div class="guide-body">
+    <div class="fold3d" id="gFold3d">
+      <span class="f3-tag">🧩 Pieghe 3D animate</span>
+      <button class="f3-replay" id="gReplay" type="button" title="Rivedi l'animazione">↻ Rivedi</button>
+      <span class="f3-hint">Trascina per ruotare · rotella: zoom</span>
+      <span class="f3-fallback">Animazione 3D — caricamento…</span>
+    </div>
+    <div class="stage" id="gStage">
+      <div class="zc" id="gZc"></div>
+      <div class="zoomhint">Doppio click / rotella: zoom · trascina: sposta · pizzica su touch</div>
+      <div class="zoombar">
+        <button data-z="out" aria-label="Riduci">−</button>
+        <button data-z="reset" aria-label="Reimposta">⟳</button>
+        <button data-z="in" aria-label="Ingrandisci">+</button>
+      </div>
     </div>
   </div>
   <div class="guide-text" id="gText"></div>
@@ -811,6 +844,7 @@
   const gPrev=document.getElementById("gPrev"), gNext=document.getElementById("gNext");
   let steps=[], cur=0;
 
+  let curPlaneType="dardo";
   function render(){
     const s=steps[cur];
     gZc.innerHTML=s.svg;
@@ -820,6 +854,7 @@
     gNext.textContent = cur===steps.length-1 ? "Fine ✓" : "Avanti ›";
     [].forEach.call(gDots.children,function(d,i){ d.classList.toggle("on", i===cur); });
     gZoom.reset();
+    if(window.FoldAnim) try{ window.FoldAnim.show(cur); }catch(_){}
   }
   function goto(i){ cur=Math.max(0,Math.min(steps.length-1,i)); render(); }
   function openGuide(plane,title){
@@ -827,6 +862,7 @@
       return { svg: li.querySelector("svg.dgm").outerHTML, txt: li.querySelector(".txt").innerHTML };
     });
     cur=0;
+    curPlaneType=({dardo:"dardo",aliante:"aliante",avanzato:"falco",nakamura:"nakamura"})[plane.id]||"dardo";
     gTitle.textContent=title;
     gDots.innerHTML="";
     steps.forEach(function(_,i){
@@ -835,13 +871,15 @@
       b.addEventListener("click",function(){ goto(i); });
       gDots.appendChild(b);
     });
-    render();
     show(guide);
     if(guide.requestFullscreen) guide.requestFullscreen().catch(function(){});
+    if(window.FoldAnim) try{ window.FoldAnim.open(curPlaneType, steps.length); }catch(_){}
+    render();
   }
   function closeGuide(){
     if(document.fullscreenElement) document.exitFullscreen().catch(function(){});
     hide(guide);
+    if(window.FoldAnim) try{ window.FoldAnim.close(); }catch(_){}
   }
   gPrev.addEventListener("click",function(){ goto(cur-1); });
   gNext.addEventListener("click",function(){ if(cur===steps.length-1) closeGuide(); else goto(cur+1); });
@@ -895,7 +933,7 @@
     }
   });
   setTimeout(function(){
-    if(!window.__v3dReady) document.querySelectorAll(".v3d-fallback").forEach(function(f){
+    if(!window.__v3dReady) document.querySelectorAll(".v3d-fallback, .f3-fallback").forEach(function(f){
       f.textContent="Vista 3D non disponibile (richiede una connessione a internet).";
     });
   },8000);
@@ -932,6 +970,27 @@ const PARAMS = {
   nakamura: { span:1.35, nose:1.50, tail:1.00, dih:0.16, keel:0.36, tipFrac:0.60, winglet:0 }
 };
 
+// ---- carta a quadretti bicolore: stesso stile della procedura guidata ----
+function makeGridTexture(){
+  const s=128, c=document.createElement('canvas'); c.width=c.height=s;
+  const x=c.getContext('2d');
+  x.fillStyle='#f5f8ff'; x.fillRect(0,0,s,s);
+  x.strokeStyle='rgba(70,110,170,0.22)'; x.lineWidth=3; x.strokeRect(0,0,s,s);
+  const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace;
+  t.wrapS=t.wrapT=THREE.RepeatWrapping; t.anisotropy=4; return t;
+}
+function makePaperMaterial(map){
+  const mat=new THREE.MeshStandardMaterial({ color:0xffffff, map:map||null,
+    roughness:0.85, metalness:0, side:THREE.DoubleSide, flatShading:false });
+  // retro della carta azzurro (come nelle istruzioni)
+  mat.onBeforeCompile=function(sh){
+    sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>',
+      '#include <color_fragment>\n if(!gl_FrontFacing){ diffuseColor.rgb *= vec3(0.46,0.62,0.92); }');
+  };
+  return mat;
+}
+const PAPER_TEX=makeGridTexture();
+
 function buildPlane(p){
   const g=new THREE.Group();
   const nose=p.nose, tail=p.tail, span=p.span, dih=p.dih, keel=p.keel, tz=tail*p.tipFrac;
@@ -953,16 +1012,18 @@ function buildPlane(p){
   }
   const geo=new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+  // UV planari (x,z) → griglia ripetuta, stessa carta delle istruzioni
+  const nv=pos.length/3, uvs=new Float32Array(nv*2);
+  for(let i=0;i<nv;i++){ uvs[i*2]=pos[i*3]*1.4; uvs[i*2+1]=pos[i*3+2]*1.4; }
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs,2));
   geo.computeVertexNormals();
-  const mat=new THREE.MeshStandardMaterial({ color:0xeaf0ff, roughness:0.92, metalness:0.0,
-    side:THREE.DoubleSide, flatShading:true });
-  g.add(new THREE.Mesh(geo,mat));
+  g.add(new THREE.Mesh(geo, makePaperMaterial(PAPER_TEX)));
   // linee di piega (richiamano i diagrammi)
   const lp=[]; const ln=(a,b)=>{ lp.push(a[0],a[1],a[2], b[0],b[1],b[2]); };
   ln(N,T); ln(N,WR); ln(WR,T); ln(N,WL); ln(WL,T); ln(N,Kf); ln(Kf,Kb); ln(Kb,T);
   const lgeo=new THREE.BufferGeometry();
   lgeo.setAttribute('position', new THREE.Float32BufferAttribute(lp,3));
-  g.add(new THREE.LineSegments(lgeo, new THREE.LineBasicMaterial({ color:0x4cc2ff, transparent:true, opacity:0.6 })));
+  g.add(new THREE.LineSegments(lgeo, new THREE.LineBasicMaterial({ color:0x4cc2ff, transparent:true, opacity:0.8 })));
   return g;
 }
 
@@ -1011,6 +1072,363 @@ function initViewer(el, p){
 }
 
 function loop(){ requestAnimationFrame(loop); for(const v of viewers){ if(v.visible) v.render(); } }
+
+/* ===== Motore di pieghe 3D animate per la procedura guidata ===== */
+const FoldAnim = (function(){
+  const W=120, H=170;                 // foglio A4 (in piano XZ): larghezza X, lunghezza Z
+  const NX=44, NZ=60;                 // risoluzione griglia
+  const EPS=0.34;                     // separazione fra strati piegati
+  const N=NX*NZ;
+  const NOSE=-H/2;                    // muso (z negativo), coda a z positiva
+
+  // ---- griglia di base (piano) ----
+  const baseX=new Float32Array(N), baseZ=new Float32Array(N);
+  const baseUV=new Float32Array(N*2);
+  for(let iz=0;iz<NZ;iz++) for(let ix=0;ix<NX;ix++){
+    const i=iz*NX+ix;
+    baseX[i]=-W/2 + W*ix/(NX-1);
+    baseZ[i]=NOSE + H*iz/(NZ-1);
+    baseUV[i*2]=ix/(NX-1); baseUV[i*2+1]=iz/(NZ-1);
+  }
+  const indices=[];
+  for(let iz=0;iz<NZ-1;iz++) for(let ix=0;ix<NX-1;ix++){
+    const a=iz*NX+ix, b=a+1, c=a+NX, d=c+1;
+    indices.push(a,c,b, b,c,d);    // fronte (bianco) rivolto verso l'alto
+  }
+
+  // ---- definizione pieghe (linee in coord. foglio [x,z]) ----
+  // moving = lato opposto a "keep"
+  function cross(ax,az,bx,bz){ return ax*bz-az*bx; }
+  function sideSign(px,pz,f){ return Math.sign(cross(f.b[0]-f.a[0], f.b[1]-f.a[1], px-f.a[0], pz-f.a[1])); }
+  function reflect(px,pz,f){
+    const dx=f.b[0]-f.a[0], dz=f.b[1]-f.a[1], L=dx*dx+dz*dz;
+    const t=((px-f.a[0])*dx+(pz-f.a[1])*dz)/L;
+    const projx=f.a[0]+t*dx, projz=f.a[1]+t*dz;
+    return [2*projx-px, 2*projz-pz];
+  }
+  const KEEP=[0,70];                  // il fondo-centro resta sempre fermo
+  function fold(a,b){ return {a:a, b:b, keep:KEEP, kind:'fold'}; }
+  function tip(z){ return {a:[-W,z], b:[W,z], keep:KEEP, kind:'fold'}; }   // piega orizzontale (ribalta la punta)
+  function lock(z){ return {a:[-W,z], b:[W,z], keep:[0,NOSE], kind:'fold'}; } // piccola linguetta in basso
+  const corners = [ fold([0,NOSE],[-W/2,NOSE+W/2]), fold([0,NOSE],[W/2,NOSE+W/2]) ];
+  function cornersAt(z){ return [ fold([0,z],[-W/2,z+W/2]), fold([0,z],[W/2,z+W/2]) ]; }
+  function edges(d){ return [ fold([0,NOSE],[-d,NOSE+60]), fold([0,NOSE],[d,NOSE+60]) ]; }
+
+  // ogni passo: {mark} marca la linea centrale · {folds:[...]} pieghe nette · {bend, tip} flessione finale
+  const SCRIPTS = {
+    dardo: [
+      {mark:true},
+      {folds:corners},
+      {folds:edges(30)},
+      {folds:edges(15)},
+      {bend:1.30},
+      {bend:0.78},
+      {bend:0.34}
+    ],
+    aliante: [
+      {mark:true},
+      {folds:corners},
+      {folds:[tip(-40)]},
+      {folds:cornersAt(-40)},
+      {folds:[lock(58)]},
+      {bend:1.32},
+      {bend:0.82},
+      {bend:0.46}
+    ],
+    falco: [
+      {mark:true},
+      {folds:corners},
+      {folds:[tip(-30)]},
+      {folds:cornersAt(-30)},
+      {folds:[lock(58)]},
+      {bend:1.38},
+      {bend:0.74},
+      {bend:0.50, winglet:true},
+      {bend:0.36, winglet:true}
+    ],
+    nakamura: [
+      {mark:true},
+      {folds:corners},
+      {folds:[tip(-45)]},
+      {folds:cornersAt(-45)},
+      {folds:[lock(58)]},
+      {bend:1.30},
+      {bend:0.80},
+      {bend:0.42}
+    ]
+  };
+
+  // stato piano stabile (dopo k pieghe) calcolato da zero
+  function computeSettled(folds){
+    const sx=new Float32Array(N), sz=new Float32Array(N), sy=new Float32Array(N);
+    for(let i=0;i<N;i++){ sx[i]=baseX[i]; sz[i]=baseZ[i]; sy[i]=0; }
+    for(const f of folds){
+      const ks=sideSign(f.keep[0],f.keep[1],f);
+      for(let i=0;i<N;i++){
+        if(sideSign(sx[i],sz[i],f)!==ks){
+          const r=reflect(sx[i],sz[i],f);
+          sx[i]=r[0]; sz[i]=r[1]; sy[i]+=EPS;
+        }
+      }
+    }
+    return {sx,sz,sy};
+  }
+  // pre-calcola, per ogni step, le pieghe accumulate e il bend attivo
+  let script=[], settledByStep=[], bendByStep=[], wingletByStep=[];
+  function prepare(type){
+    script=SCRIPTS[type]||SCRIPTS.dardo;
+    settledByStep=[]; bendByStep=[]; wingletByStep=[];
+    let acc=[], bend=null, wl=false;
+    for(let i=0;i<script.length;i++){
+      const st=script[i];
+      if(st.folds) acc=acc.concat(st.folds);
+      if(st.bend!=null){ bend=st.bend; wl=!!st.winglet; }
+      settledByStep[i]=computeSettled(acc);
+      bendByStep[i]=bend;
+      wingletByStep[i]=wl;
+    }
+  }
+
+  // ---- rotazione attorno a un asse nel piano XZ (per animare una piega) ----
+  function makeAxis(f){
+    let ux=f.b[0]-f.a[0], uz=f.b[1]-f.a[1];
+    const L=Math.hypot(ux,uz)||1; ux/=L; uz/=L;
+    return {ax:f.a[0], az:f.a[1], ux, uz};
+  }
+  function rotAxis(out,o, px,py,pz, A, theta){
+    const rx=px-A.ax, ry=py, rz=pz-A.az;
+    const c=Math.cos(theta), s=Math.sin(theta);
+    const kdotr=A.ux*rx + A.uz*rz;
+    const kxx=-A.uz*ry, kxy=A.uz*rx-A.ux*rz, kxz=A.ux*ry;
+    out[o]   = A.ax + rx*c + kxx*s + A.ux*kdotr*(1-c);
+    out[o+1] =        ry*c + kxy*s;
+    out[o+2] = A.az + rz*c + kxz*s + A.uz*kdotr*(1-c);
+  }
+
+  // ---- pose: flette il foglio piegato in una V (piega a metà → ali) ----
+  function poseInto(P, S, bend, winglet){
+    const cb=Math.cos(bend), sb=Math.sin(bend);
+    for(let i=0;i<N;i++){
+      const fx=S.sx[i], fz=S.sz[i], fy=S.sy[i];
+      let y = fy*0.5 + Math.abs(fx)*sb;
+      if(winglet){ const t=Math.abs(fx)/(W/2); if(t>0.72) y += (t-0.72)*W*0.9; }
+      P[i*3]   = fx*cb;
+      P[i*3+1] = y;
+      P[i*3+2] = fz;
+    }
+  }
+  function flatInto(P, S){
+    for(let i=0;i<N;i++){ P[i*3]=S.sx[i]; P[i*3+1]=S.sy[i]; P[i*3+2]=S.sz[i]; }
+  }
+
+  // ---- texture "carta a quadretti" (rende visibile la deformazione delle pieghe) ----
+  function makePaperTexture(){
+    const cw=256, ch=Math.round(256*H/W);
+    const c=document.createElement('canvas'); c.width=cw; c.height=ch;
+    const x=c.getContext('2d');
+    x.fillStyle='#f5f8ff'; x.fillRect(0,0,cw,ch);
+    const step=cw/12;                       // quadretti uniformi
+    x.lineWidth=1; x.strokeStyle='rgba(70,110,170,0.20)';
+    for(let p=0;p<=cw+1;p+=step){ x.beginPath(); x.moveTo(p,0); x.lineTo(p,ch); x.stroke(); }
+    for(let p=0;p<=ch+1;p+=step){ x.beginPath(); x.moveTo(0,p); x.lineTo(cw,p); x.stroke(); }
+    x.lineWidth=3; x.strokeStyle='rgba(70,110,170,0.40)'; x.strokeRect(1.5,1.5,cw-3,ch-3);
+    const t=new THREE.CanvasTexture(c);
+    t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=4;
+    return t;
+  }
+
+  // ---- setup three ----
+  let scene, camera, renderer, controls, geo, mesh, P, el, running=false, raf=0;
+  let crease, creasePos, shownStep=-1, anim=null, replayWired=false;
+
+  function ensure(container){
+    el=container;
+    if(renderer){ return; }
+    scene=new THREE.Scene();
+    camera=new THREE.PerspectiveCamera(42,1,0.1,1000);
+    renderer=new THREE.WebGLRenderer({antialias:true, alpha:true});
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio||1));
+    el.appendChild(renderer.domElement);
+    scene.add(new THREE.HemisphereLight(0xdfe9ff,0x2a3350,1.2));
+    const d1=new THREE.DirectionalLight(0xffffff,1.15); d1.position.set(3,5,2); scene.add(d1);
+    const d2=new THREE.DirectionalLight(0x9ec0ff,0.5); d2.position.set(-4,2,-3); scene.add(d2);
+
+    P=new Float32Array(N*3);
+    geo=new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(P,3));
+    geo.setAttribute('uv', new THREE.BufferAttribute(baseUV,2));
+    geo.setIndex(indices);
+    const mat=new THREE.MeshStandardMaterial({color:0xffffff, map:makePaperTexture(),
+      roughness:0.85, metalness:0, side:THREE.DoubleSide, flatShading:false});
+    // facce bicolore: fronte chiaro, retro azzurro → si vede quale lembo si è ripiegato
+    mat.onBeforeCompile=function(sh){
+      sh.fragmentShader = sh.fragmentShader.replace('#include <color_fragment>',
+        '#include <color_fragment>\n if(!gl_FrontFacing){ diffuseColor.rgb *= vec3(0.46,0.62,0.92); }');
+    };
+    mesh=new THREE.Mesh(geo,mat);
+    const grp=new THREE.Group(); grp.add(mesh); grp.rotation.x=-0.12; scene.add(grp);
+
+    // linea di piega evidenziata del passo corrente
+    creasePos=new Float32Array(4*2*3);      // fino a 4 segmenti
+    const cgeo=new THREE.BufferGeometry();
+    cgeo.setAttribute('position', new THREE.BufferAttribute(creasePos,3));
+    crease=new THREE.LineSegments(cgeo, new THREE.LineBasicMaterial({color:0x4cc2ff,
+      transparent:true, opacity:0.95, depthTest:false}));
+    crease.renderOrder=3; crease.visible=false; grp.add(crease);
+
+    controls=new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping=true; controls.dampingFactor=0.08; controls.enablePan=false;
+    controls.minDistance=W*1.1; controls.maxDistance=W*4.0; controls.autoRotate=false;
+    camera.position.set(0, W*1.7, W*1.6); controls.target.set(0,0,0); controls.update();
+
+    new ResizeObserver(resize).observe(el);
+    if(!replayWired){ const rb=document.getElementById('gReplay');
+      if(rb){ rb.addEventListener('click', replay); replayWired=true; } }
+    const fb=el.querySelector('.f3-fallback'); if(fb) fb.remove();
+  }
+
+  // ---- linea di piega: ritaglia la linea al riquadro del foglio ----
+  function clipLine(ax,az,bx,bz, xmin,xmax,zmin,zmax){
+    let t0=0,t1=1; const dx=bx-ax, dz=bz-az;
+    function clip(p,q){ if(Math.abs(p)<1e-9) return q>=0;
+      const r=q/p; if(p<0){ if(r>t1) return false; if(r>t0) t0=r; } else { if(r<t0) return false; if(r<t1) t1=r; } return true; }
+    // estendi la linea ben oltre i due punti, poi ritaglia
+    const ex=ax-dx*4, ez=az-dz*4, fx=bx+dx*4, fz=bz+dz*4;
+    const Dx=fx-ex, Dz=fz-ez;
+    t0=0; t1=1;
+    if(!clip(-Dx, ex-xmin)) return null;
+    if(!clip( Dx, xmax-ex)) return null;
+    if(!clip(-Dz, ez-zmin)) return null;
+    if(!clip( Dz, zmax-ez)) return null;
+    return [[ex+t0*Dx, ez+t0*Dz],[ex+t1*Dx, ez+t1*Dz]];
+  }
+  function bboxOf(S){ let a=1e9,b=-1e9,c=1e9,d=-1e9;
+    for(let i=0;i<N;i++){ const x=S.sx[i],z=S.sz[i]; if(x<a)a=x; if(x>b)b=x; if(z<c)c=z; if(z>d)d=z; }
+    return [a,b,c,d]; }
+  function setCreaseForStep(i){
+    const st=script[i], S=settledByStep[i], bb=bboxOf(S);
+    const bend = st.bend!=null;
+    const y = bend ? 0.15 : Math.max(2.2, S.sy.reduce((m,v)=>Math.max(m,v),0)+0.8);
+    let lines=[];
+    if(st.mark) lines=[[0,NOSE,0,H/2]];
+    else if(st.folds) lines=st.folds.map(f=>[f.a[0],f.a[1],f.b[0],f.b[1]]);
+    else lines=[[0,NOSE,0,H/2]];           // bend: chiglia centrale
+    let n=0;
+    for(const L of lines){ if(n>=4) break;
+      const s=clipLine(L[0],L[1],L[2],L[3], bb[0],bb[1],bb[2],bb[3]); if(!s) continue;
+      creasePos[n*6]=s[0][0]; creasePos[n*6+1]=y; creasePos[n*6+2]=s[0][1];
+      creasePos[n*6+3]=s[1][0]; creasePos[n*6+4]=y; creasePos[n*6+5]=s[1][1]; n++;
+    }
+    crease.geometry.setDrawRange(0, n*2);
+    crease.geometry.attributes.position.needsUpdate=true;
+    crease.visible = n>0;
+  }
+  function resize(){ if(!el) return; const w=el.clientWidth, h=el.clientHeight; if(!w||!h) return;
+    renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+
+  function commit(){ geo.attributes.position.needsUpdate=true; geo.computeVertexNormals(); }
+
+  function tick(){
+    if(!running) return;
+    raf=requestAnimationFrame(tick);
+    if(anim){
+      const now=performance.now();
+      let p=(now-anim.t0)/anim.dur; if(p>=1){ p=1; }
+      const e=p<.5 ? 4*p*p*p : 1-Math.pow(-2*p+2,3)/2;  // easeInOutCubic
+      anim.step(e);
+      commit();
+      if(p>=1){ anim.done&&anim.done(); anim=null; }
+    }
+    controls.update();
+    renderer.render(scene,camera);
+  }
+
+  // anima marcatura linea centrale (piega e riapre)
+  function animateMark(S, dur){
+    const f=fold([0,NOSE],[0,H/2]); f.keep=[-30,0];
+    const ks=sideSign(f.keep[0],f.keep[1],f);
+    const moving=[]; for(let i=0;i<N;i++){ if(sideSign(S.sx[i],S.sz[i],f)!==ks) moving.push(i); }
+    const A=makeAxis(f); const o=[0,0,0];
+    flatInto(P,S);
+    return { step(e){
+        const theta=Math.sin(Math.PI*e)*2.6;        // su e giù
+        for(const i of moving){ rotAxis(o,0,S.sx[i],S.sy[i],S.sz[i],A,theta); P[i*3]=o[0];P[i*3+1]=o[1];P[i*3+2]=o[2]; }
+      }, done(){ flatInto(P,S); commit(); } };
+  }
+  // anima flessione del bend
+  function animateBend(S, fromB, toB, winglet, dur){
+    return { step(e){ poseInto(P, S, fromB+(toB-fromB)*e, winglet); } };
+  }
+
+  function display(i){
+    const S=settledByStep[i], b=bendByStep[i];
+    if(b!=null) poseInto(P,S,b,wingletByStep[i]); else flatInto(P,S);
+    commit();
+  }
+  // costruisce l'animazione del passo i (riusata da show e replay)
+  function buildAnim(i){
+    const st=script[i];
+    const prevS = i>0 ? settledByStep[i-1] : computeSettled([]);
+    const dur = st.bend!=null ? 1200 : 950;
+    let a=null;
+    if(st.mark) a=animateMark(prevS, dur);
+    else if(st.folds) a=animateFolds(prevS, st.folds, settledByStep[i], dur);
+    else if(st.bend!=null){ const fromB=bendByStep[i-1]!=null?bendByStep[i-1]:0; a=animateBend(settledByStep[i], fromB, st.bend, wingletByStep[i], dur); }
+    if(a){ a.t0=performance.now(); a.dur=dur; }
+    return a;
+  }
+
+  // ---- API pubblica ----
+  function open(type, nSteps){
+    const c=document.getElementById('gFold3d'); if(!c) return;
+    ensure(c); prepare(type); shownStep=-1; anim=null;
+    running=true; resize(); cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);
+    setTimeout(resize,120); setTimeout(resize,400);
+  }
+  function show(i){
+    if(!renderer || !script.length) return;
+    if(i===shownStep) return;
+    const animate = (i===shownStep+1);
+    setCreaseForStep(i);
+    if(animate){ const a=buildAnim(i); if(a) anim=a; else { anim=null; display(i); } }
+    else { anim=null; display(i); }
+    shownStep=i;
+  }
+  function replay(){
+    if(!renderer || !script.length || shownStep<0) return;
+    const a=buildAnim(shownStep);
+    setCreaseForStep(shownStep);
+    if(a) anim=a; else display(shownStep);
+  }
+  // anima più pieghe simultanee (es. i due angoli) verso lo stato finale
+  function animateFolds(prevS, folds, finalS, dur){
+    const layers=folds.map(f=>{
+      const ks=sideSign(f.keep[0],f.keep[1],f);
+      const moving=[]; for(let i=0;i<N;i++){ if(sideSign(prevS.sx[i],prevS.sz[i],f)!==ks) moving.push(i); }
+      const A=makeAxis(f);
+      let cy=0; for(const i of moving){ cy += A.uz*(prevS.sx[i]-A.ax) - A.ux*(prevS.sz[i]-A.az); }
+      return {A, moving, sgn: cy>=0?1:-1};
+    });
+    flatInto(P, prevS);
+    const o=[0,0,0];
+    return {
+      step(e){
+        for(const L of layers){
+          const theta=L.sgn*Math.PI*e;
+          for(const i of L.moving){
+            rotAxis(o,0, prevS.sx[i], prevS.sy[i], prevS.sz[i], L.A, theta);
+            P[i*3]=o[0]; P[i*3+1]=o[1]; P[i*3+2]=o[2];
+          }
+        }
+      },
+      done(){ flatInto(P, finalS); commit(); }
+    };
+  }
+  function close(){ running=false; cancelAnimationFrame(raf); if(crease) crease.visible=false; }
+
+  return { open, show, close, replay };
+})();
+window.FoldAnim = FoldAnim;
 
 try {
   document.querySelectorAll('.viewer3d').forEach(el=> initViewer(el, PARAMS[el.dataset.type]));
