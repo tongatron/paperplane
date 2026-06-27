@@ -59,23 +59,8 @@
   .meta{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;font-size:.92rem;color:var(--muted)}
   .meta span b{color:var(--ink)}
 
-  /* i passaggi 2D non si mostrano più in pagina: tutto è nella procedura guidata.
-     restano nel DOM solo come sorgente testi per la guida e per il PDF */
-  ol.steps{display:none}
-  ol.steps{counter-reset:step;list-style:none;padding:0;margin:0}
-  ol.steps li{position:relative;display:flex;gap:14px;align-items:center;padding:12px 14px;margin-bottom:10px;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:12px}
-  ol.steps li::before{counter-increment:step;content:counter(step);flex:0 0 30px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#06223a;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.95rem;align-self:flex-start}
-  ol.steps li b{color:var(--ink)}
-  ol.steps li .txt{flex:1 1 auto;min-width:150px;align-self:center}
-
-  .dgm{flex:0 0 100px;width:100px;height:124px;background:#0e1830;border:1px solid var(--line);border-radius:10px}
-  .paper{fill:#eef3ff;stroke:#b9c8e8;stroke-width:1.5}
-  .flap{fill:#cdd9f3;stroke:#b9c8e8;stroke-width:1}
-  .fold{stroke:#4cc2ff;stroke-width:1.8;stroke-dasharray:5 3;fill:none}
+  /* stili del grafico "Traiettorie a confronto" */
   .ref{stroke:#6f83ab;stroke-width:1;stroke-dasharray:2 3;fill:none}
-  .arrow{stroke:#ffd166;stroke-width:1.8;fill:none}
-  .arrowhead{fill:#ffd166}
-  .fuse{stroke:#eef3ff;stroke-width:6;stroke-linecap:round}
   .lbl{fill:#9fb0d0;font-size:9px;font-family:sans-serif}
 
   .tuning{margin-top:22px;padding:18px;border-radius:12px;background:rgba(76,194,255,.08);border:1px solid rgba(76,194,255,.25)}
@@ -90,8 +75,6 @@
 
   @media(max-width:560px){
     .plane{padding:20px}
-    ol.steps li{flex-wrap:wrap}
-    .dgm{flex:0 0 78px;width:78px;height:96px}
   }
 
   /* ---- pulsanti azione per aeroplano ---- */
@@ -101,9 +84,8 @@
   .btn:hover{border-color:var(--accent);transform:translateY(-2px)}
   .btn.primary{background:linear-gradient(135deg,#1e6fa8,#2f9bd6);border-color:transparent;color:#fff}
   .btn.primary:hover{filter:brightness(1.08)}
-  .dgm{cursor:zoom-in}
 
-  /* ---- overlay condiviso: guida + lightbox ---- */
+  /* ---- overlay procedura guidata ---- */
   .overlay{position:fixed;inset:0;z-index:1000;background:#0a1020;display:flex;flex-direction:column;color:var(--ink)}
   .overlay[hidden]{display:none}
   .ov-top{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--line)}
@@ -113,16 +95,6 @@
   .ov-close{cursor:pointer;background:var(--card);border:1px solid var(--line);color:var(--ink);
     width:42px;height:42px;border-radius:12px;font-size:1.1rem}
   .ov-close:hover{border-color:#ff8e8e;color:#ff8e8e}
-
-  .stage{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;touch-action:none}
-  .stage .zc{will-change:transform;transform-origin:0 0;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
-  .stage{padding:14px}
-  .stage svg{flex:0 0 auto;width:auto;height:100%;max-height:100%;max-width:94vw;background:#0e1830;border:1px solid var(--line);border-radius:16px}
-  .zoombar{position:absolute;right:18px;bottom:18px;display:flex;gap:8px}
-  .zoombar button{cursor:pointer;width:46px;height:46px;border-radius:12px;border:1px solid var(--line);
-    background:var(--card);color:var(--ink);font-size:1.3rem;line-height:1}
-  .zoombar button:hover{border-color:var(--accent);color:var(--accent)}
-  .zoomhint{position:absolute;left:18px;bottom:22px;color:var(--muted);font-size:.85rem;pointer-events:none;max-width:calc(100% - 190px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
   .guide-text{padding:18px 24px;font-size:1.15rem;line-height:1.55;text-align:center;max-width:800px;margin:0 auto}
   .guide-nav{display:flex;align-items:center;gap:16px;padding:14px 20px 24px;justify-content:center;flex-wrap:wrap}
@@ -136,10 +108,8 @@
   .nav-btn.primary{background:var(--accent);color:#06223a;border-color:transparent;font-weight:700}
 
   @media(max-width:560px){
-    .stage svg{max-width:92vw}
     .dots{max-width:62vw}
     .guide-text{font-size:1.05rem;padding:14px 16px}
-    .zoomhint{display:none}
   }
 
   /* ---- visualizzatore 3D ---- */
@@ -250,73 +220,6 @@
     </div>
     <p class="subtitle">Il classico aereo da corridoio. Muso affilato, vola dritto e veloce — il migliore per la <b>distanza pura</b> con un lancio energico.</p>
     <div class="meta"><span>⏱️ <b>2 minuti</b></span><span>📄 <b>1 foglio A4</b></span><span>🏆 <b>Distanza</b></span></div>
-    <ol class="steps">
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Piega a metà e riapri</title>
-          <rect x="25" y="12" width="70" height="126" rx="2" class="paper"/>
-          <line x1="60" y1="8" x2="60" y2="142" class="fold"/>
-          <path d="M38 75 Q49 72 55 75" class="arrow"/><polygon points="56,75 50,72 50,78" class="arrowhead"/>
-          <path d="M82 75 Q71 72 65 75" class="arrow"/><polygon points="64,75 70,72 70,78" class="arrowhead"/>
-        </svg>
-        <span class="txt">Appoggia il foglio in <b>verticale</b>. Piegalo a metà nel senso della lunghezza per segnare la linea centrale, poi <b>riaprilo</b>.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Angoli superiori al centro</title>
-          <rect x="25" y="12" width="70" height="126" rx="2" class="paper"/>
-          <line x1="60" y1="12" x2="25" y2="52" class="fold"/><line x1="60" y1="12" x2="95" y2="52" class="fold"/>
-          <line x1="60" y1="12" x2="60" y2="138" class="ref"/>
-          <path d="M30 20 Q44 30 52 22" class="arrow"/><polygon points="52,22 47,20 50,27" class="arrowhead"/>
-          <path d="M90 20 Q76 30 68 22" class="arrow"/><polygon points="68,22 73,20 70,27" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega i <b>due angoli superiori</b> verso il centro, così che i bordi si incontrino sulla linea mediana. Ottieni una punta a triangolo.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Bordi inclinati al centro</title>
-          <polygon points="60,12 95,52 95,138 25,138 25,52" class="paper"/>
-          <line x1="60" y1="12" x2="42" y2="52" class="fold"/><line x1="60" y1="12" x2="78" y2="52" class="fold"/>
-          <line x1="60" y1="12" x2="60" y2="138" class="ref"/>
-          <path d="M30 44 Q42 50 50 46" class="arrow"/><polygon points="50,46 45,44 48,51" class="arrowhead"/>
-          <path d="M90 44 Q78 50 70 46" class="arrow"/><polygon points="70,46 75,44 72,51" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega di nuovo i <b>nuovi bordi inclinati</b> verso la linea centrale. Il muso diventa lungo e affilato. Premi bene.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Ripeti la piega dei bordi</title>
-          <polygon points="60,12 78,55 95,138 25,138 42,55" class="paper"/>
-          <line x1="60" y1="12" x2="51" y2="55" class="fold"/><line x1="60" y1="12" x2="69" y2="55" class="fold"/>
-          <line x1="60" y1="12" x2="60" y2="138" class="ref"/>
-          <path d="M40 48 Q50 53 56 50" class="arrow"/><polygon points="56,50 51,48 54,55" class="arrowhead"/>
-          <path d="M80 48 Q70 53 64 50" class="arrow"/><polygon points="64,50 69,48 66,55" class="arrowhead"/>
-        </svg>
-        <span class="txt">Ripeti ancora: piega i bordi lunghi verso il centro per un muso ancora più sottile e un baricentro spostato in avanti.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Piega a metà</title>
-          <polygon points="60,12 78,55 95,138 25,138 42,55" class="paper"/>
-          <line x1="60" y1="8" x2="60" y2="142" class="fold"/>
-          <path d="M86 28 Q60 16 70 40" class="arrow"/><polygon points="70,40 64,36 71,33" class="arrowhead"/>
-        </svg>
-        <span class="txt">Chiudi l'aereo piegandolo <b>a metà lungo la linea centrale</b>, con le pieghe rivolte all'esterno.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Crea le ali</title>
-          <polygon points="14,75 106,48 106,102" class="paper"/>
-          <line x1="22" y1="73" x2="104" y2="60" class="fold"/>
-          <path d="M60 70 q5 14 0 22" class="arrow"/><polygon points="60,92 55,86 65,86" class="arrowhead"/>
-          <text x="60" y="120" text-anchor="middle" class="lbl">vista laterale</text>
-        </svg>
-        <span class="txt">Crea le <b>ali</b>: piega ciascun lato verso il basso allineando il bordo superiore con quello della pancia. Devono essere identiche.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Apri le ali a V</title>
-          <line x1="60" y1="58" x2="60" y2="95" class="fuse"/>
-          <polygon points="60,70 18,58 18,64 60,80" class="paper"/>
-          <polygon points="60,70 102,58 102,64 60,80" class="paper"/>
-          <text x="60" y="118" text-anchor="middle" class="lbl">vista frontale · ala a V</text>
-        </svg>
-        <span class="txt">Apri le ali in orizzontale formando una leggera <b>V</b> vista da davanti. Sei pronto al lancio.</span>
-      </li>
-    </ol>
     <div class="tuning">
       <h4>🔧 Messa a punto</h4>
       <ul>
@@ -335,82 +238,6 @@
     </div>
     <p class="subtitle">Ali larghe e muso smussato: non è velocissimo ma <b>plana dolcemente</b>, restando in aria a lungo. Ideale per lanci morbidi e tempi di volo lunghi.</p>
     <div class="meta"><span>⏱️ <b>3 minuti</b></span><span>📄 <b>1 foglio A4</b></span><span>🏆 <b>Tempo di volo</b></span></div>
-    <ol class="steps">
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Piega a metà e riapri</title>
-          <rect x="25" y="12" width="70" height="126" rx="2" class="paper"/>
-          <line x1="60" y1="8" x2="60" y2="142" class="fold"/>
-          <path d="M38 75 Q49 72 55 75" class="arrow"/><polygon points="56,75 50,72 50,78" class="arrowhead"/>
-          <path d="M82 75 Q71 72 65 75" class="arrow"/><polygon points="64,75 70,72 70,78" class="arrowhead"/>
-        </svg>
-        <span class="txt">Foglio in verticale. Piega a metà nel senso della lunghezza e <b>riapri</b> per avere la linea centrale.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Angoli superiori al centro</title>
-          <rect x="25" y="12" width="70" height="126" rx="2" class="paper"/>
-          <line x1="60" y1="12" x2="25" y2="52" class="fold"/><line x1="60" y1="12" x2="95" y2="52" class="fold"/>
-          <line x1="60" y1="12" x2="60" y2="138" class="ref"/>
-          <path d="M30 20 Q44 30 52 22" class="arrow"/><polygon points="52,22 47,20 50,27" class="arrowhead"/>
-          <path d="M90 20 Q76 30 68 22" class="arrow"/><polygon points="68,22 73,20 70,27" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega i due <b>angoli superiori</b> verso il centro: ottieni un triangolo in cima.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Ribalta la punta in basso</title>
-          <polygon points="60,12 95,52 95,138 25,138 25,52" class="paper"/>
-          <line x1="25" y1="48" x2="95" y2="48" class="fold"/>
-          <path d="M60 20 q0 12 0 18" class="arrow"/><polygon points="60,40 55,33 65,33" class="arrowhead"/>
-        </svg>
-        <span class="txt"><b>Ribalta verso il basso la punta</b> del triangolo: l'apice arriva a 2-3 cm dal bordo della parte piegata. Smussa il muso e sposta il peso avanti.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Angoli al centro di nuovo</title>
-          <polygon points="25,48 95,48 95,138 25,138" class="paper"/>
-          <line x1="60" y1="48" x2="25" y2="92" class="fold"/><line x1="60" y1="48" x2="95" y2="92" class="fold"/>
-          <line x1="60" y1="48" x2="60" y2="138" class="ref"/>
-          <path d="M30 56 Q44 66 52 58" class="arrow"/><polygon points="52,58 47,56 50,63" class="arrowhead"/>
-          <path d="M90 56 Q76 66 68 58" class="arrow"/><polygon points="68,58 73,56 70,63" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega di nuovo i due angoli superiori verso il centro: i bordi inclinati scendono e si incontrano sopra la punta ribaltata.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Risvolta la puntina (lock)</title>
-          <polygon points="60,48 88,92 88,138 32,138 32,92" class="paper"/>
-          <polygon points="46,118 74,118 60,138" class="flap"/>
-          <line x1="46" y1="118" x2="74" y2="118" class="fold"/>
-          <path d="M60 134 q0 -10 0 -16" class="arrow"/><polygon points="60,118 55,125 65,125" class="arrowhead"/>
-          <text x="60" y="148" text-anchor="middle" class="lbl">incastro</text>
-        </svg>
-        <span class="txt"><b>Risvolta in su la puntina</b> che sporge sotto: fa da fermo e tiene chiuse le pieghe. È il segreto della stabilità.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Piega a metà</title>
-          <polygon points="60,48 88,92 88,138 32,138 32,92" class="paper"/>
-          <line x1="60" y1="44" x2="60" y2="142" class="fold"/>
-          <path d="M82 64 Q60 54 68 76" class="arrow"/><polygon points="68,76 62,72 69,69" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega l'aereo a metà lungo la linea centrale, con il fermo all'esterno.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Crea le ali larghe</title>
-          <polygon points="14,75 106,48 106,102" class="paper"/>
-          <line x1="22" y1="73" x2="104" y2="60" class="fold"/>
-          <path d="M60 70 q5 14 0 22" class="arrow"/><polygon points="60,92 55,86 65,86" class="arrowhead"/>
-          <text x="60" y="120" text-anchor="middle" class="lbl">vista laterale</text>
-        </svg>
-        <span class="txt">Forma le <b>ali larghe</b> piegando ogni lato verso il basso. Lascia le ali ampie: più superficie = più portanza.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Apri le ali e alza i flaps</title>
-          <polygon points="60,16 90,130 60,114 30,130" class="paper"/>
-          <line x1="38" y1="124" x2="50" y2="120" class="fold"/><line x1="82" y1="124" x2="70" y2="120" class="fold"/>
-          <path d="M40 140 Q42 130 45 133" class="arrow"/><polygon points="45,133 39,132 43,127" class="arrowhead"/>
-          <path d="M80 140 Q78 130 75 133" class="arrow"/><polygon points="75,133 81,132 77,127" class="arrowhead"/>
-          <text x="60" y="148" text-anchor="middle" class="lbl">alette posteriori su</text>
-        </svg>
-        <span class="txt">Apri le ali a leggera V. Aggiungi due piccoli <b>flaps</b> in su sul bordo posteriore.</span>
-      </li>
-    </ol>
     <div class="tuning">
       <h4>🔧 Messa a punto</h4>
       <ul>
@@ -430,91 +257,6 @@
     </div>
     <p class="subtitle">Un design da competizione: muso compatto e pesante, ali strette e stabili. Richiede pieghe precise ma è quello che vola <b>più lontano</b> con un lancio potente.</p>
     <div class="meta"><span>⏱️ <b>5 minuti</b></span><span>📄 <b>1 foglio A4</b></span><span>🏆 <b>Record di distanza</b></span></div>
-    <ol class="steps">
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Piega a metà e riapri</title>
-          <rect x="25" y="12" width="70" height="126" rx="2" class="paper"/>
-          <line x1="60" y1="8" x2="60" y2="142" class="fold"/>
-          <path d="M38 75 Q49 72 55 75" class="arrow"/><polygon points="56,75 50,72 50,78" class="arrowhead"/>
-          <path d="M82 75 Q71 72 65 75" class="arrow"/><polygon points="64,75 70,72 70,78" class="arrowhead"/>
-        </svg>
-        <span class="txt">Foglio in verticale. Piega a metà nel lungo e <b>riapri</b> (linea centrale).</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Angoli superiori al centro</title>
-          <rect x="25" y="12" width="70" height="126" rx="2" class="paper"/>
-          <line x1="60" y1="12" x2="25" y2="52" class="fold"/><line x1="60" y1="12" x2="95" y2="52" class="fold"/>
-          <line x1="60" y1="12" x2="60" y2="138" class="ref"/>
-          <path d="M30 20 Q44 30 52 22" class="arrow"/><polygon points="52,22 47,20 50,27" class="arrowhead"/>
-          <path d="M90 20 Q76 30 68 22" class="arrow"/><polygon points="68,22 73,20 70,27" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega i due <b>angoli superiori</b> al centro per fare il triangolo iniziale.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Ribalta la punta in basso</title>
-          <polygon points="60,12 95,52 95,138 25,138 25,52" class="paper"/>
-          <line x1="25" y1="58" x2="95" y2="58" class="fold"/>
-          <path d="M60 22 q0 16 0 22" class="arrow"/><polygon points="60,48 55,41 65,41" class="arrowhead"/>
-        </svg>
-        <span class="txt">Ribalta in giù la <b>punta del triangolo</b> fino a ~4 cm dalla base, creando un bordo dritto in alto.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Angoli al centro, punta che spunta</title>
-          <polygon points="25,58 95,58 95,138 25,138" class="paper"/>
-          <line x1="60" y1="58" x2="25" y2="100" class="fold"/><line x1="60" y1="58" x2="95" y2="100" class="fold"/>
-          <line x1="60" y1="58" x2="60" y2="138" class="ref"/>
-          <path d="M30 66 Q44 76 52 68" class="arrow"/><polygon points="52,68 47,66 50,73" class="arrowhead"/>
-          <path d="M90 66 Q76 76 68 68" class="arrow"/><polygon points="68,68 73,66 70,73" class="arrowhead"/>
-        </svg>
-        <span class="txt">Porta di nuovo i <b>due angoli superiori al centro</b>, lasciando spuntare ~1 cm della punta sotto.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Risvolta la linguetta (lock)</title>
-          <polygon points="60,58 90,100 90,138 30,138 30,100" class="paper"/>
-          <polygon points="47,120 73,120 60,138" class="flap"/>
-          <line x1="47" y1="120" x2="73" y2="120" class="fold"/>
-          <path d="M60 134 q0 -9 0 -15" class="arrow"/><polygon points="60,120 55,127 65,127" class="arrowhead"/>
-          <text x="60" y="148" text-anchor="middle" class="lbl">incastro</text>
-        </svg>
-        <span class="txt">Piega in su quella <b>linguetta</b> sopra i lembi: blocca tutto e concentra il peso sul muso.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Piega a metà</title>
-          <polygon points="60,58 90,100 90,138 30,138 30,100" class="paper"/>
-          <line x1="60" y1="54" x2="60" y2="142" class="fold"/>
-          <path d="M84 72 Q60 62 68 84" class="arrow"/><polygon points="68,84 62,80 69,77" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega l'intero aereo a metà lungo la linea centrale, lembi all'esterno.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Crea le ali strette</title>
-          <polygon points="14,80 106,56 106,98" class="paper"/>
-          <line x1="22" y1="79" x2="104" y2="66" class="fold"/>
-          <path d="M60 76 q5 12 0 18" class="arrow"/><polygon points="60,94 55,88 65,88" class="arrowhead"/>
-          <text x="60" y="122" text-anchor="middle" class="lbl">ali sottili</text>
-        </svg>
-        <span class="txt">Crea le <b>ali strette</b>: piega ogni lato verso il basso partendo da ~1,5 cm sopra la base. Ali sottili = poca resistenza.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Aggiungi le winglet verticali</title>
-          <line x1="60" y1="62" x2="60" y2="96" class="fuse"/>
-          <polygon points="60,72 22,62 22,68 60,80" class="paper"/>
-          <polygon points="60,72 98,62 98,68 60,80" class="paper"/>
-          <line x1="22" y1="62" x2="22" y2="46" class="fold"/><line x1="98" y1="62" x2="98" y2="46" class="fold"/>
-          <text x="60" y="118" text-anchor="middle" class="lbl">winglet verticali</text>
-        </svg>
-        <span class="txt">Piega all'estremità di ogni ala una piccola <b>aletta verticale</b> (winglet) verso l'alto, alta ~1 cm: stabilizza la rotta.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Apri le ali piatte a V</title>
-          <line x1="60" y1="58" x2="60" y2="95" class="fuse"/>
-          <polygon points="60,72 18,64 18,70 60,78" class="paper"/>
-          <polygon points="60,72 102,64 102,70 60,78" class="paper"/>
-          <text x="60" y="118" text-anchor="middle" class="lbl">vista frontale</text>
-        </svg>
-        <span class="txt">Apri le ali piatte e orizzontali con leggerissimo diedro a V.</span>
-      </li>
-    </ol>
     <div class="tuning">
       <h4>🔧 Messa a punto</h4>
       <ul>
@@ -534,82 +276,6 @@
     </div>
     <p class="subtitle">Modello giapponese leggendario per la sua <b>stabilità</b>. Il "lock" (incastro) tiene insieme le pieghe e perdona gli errori: il miglior equilibrio tra distanza e durata.</p>
     <div class="meta"><span>⏱️ <b>4 minuti</b></span><span>📄 <b>1 foglio A4</b></span><span>🏆 <b>Affidabilità</b></span></div>
-    <ol class="steps">
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Piega a metà e riapri</title>
-          <rect x="25" y="12" width="70" height="126" rx="2" class="paper"/>
-          <line x1="60" y1="8" x2="60" y2="142" class="fold"/>
-          <path d="M38 75 Q49 72 55 75" class="arrow"/><polygon points="56,75 50,72 50,78" class="arrowhead"/>
-          <path d="M82 75 Q71 72 65 75" class="arrow"/><polygon points="64,75 70,72 70,78" class="arrowhead"/>
-        </svg>
-        <span class="txt">Foglio in verticale. Piega a metà nel lungo e <b>riapri</b>.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Angoli superiori al centro</title>
-          <rect x="25" y="12" width="70" height="126" rx="2" class="paper"/>
-          <line x1="60" y1="12" x2="25" y2="52" class="fold"/><line x1="60" y1="12" x2="95" y2="52" class="fold"/>
-          <line x1="60" y1="12" x2="60" y2="138" class="ref"/>
-          <path d="M30 20 Q44 30 52 22" class="arrow"/><polygon points="52,22 47,20 50,27" class="arrowhead"/>
-          <path d="M90 20 Q76 30 68 22" class="arrow"/><polygon points="68,22 73,20 70,27" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega i due <b>angoli superiori</b> al centro: triangolo in cima.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Ribalta la punta, lascia un bordo</title>
-          <polygon points="60,12 95,52 95,138 25,138 25,52" class="paper"/>
-          <line x1="25" y1="44" x2="95" y2="44" class="fold"/>
-          <path d="M60 20 q0 10 0 16" class="arrow"/><polygon points="60,36 55,29 65,29" class="arrowhead"/>
-        </svg>
-        <span class="txt">Ribalta la <b>punta verso il basso</b>, fermandoti ~1,5 cm sopra dove finiscono i lembi (resta un piccolo bordo orizzontale in alto).</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Angoli al centro una seconda volta</title>
-          <polygon points="25,44 95,44 95,138 25,138" class="paper"/>
-          <line x1="60" y1="44" x2="25" y2="88" class="fold"/><line x1="60" y1="44" x2="95" y2="88" class="fold"/>
-          <line x1="60" y1="44" x2="60" y2="138" class="ref"/>
-          <path d="M30 52 Q44 62 52 54" class="arrow"/><polygon points="52,54 47,52 50,59" class="arrowhead"/>
-          <path d="M90 52 Q76 62 68 54" class="arrow"/><polygon points="68,54 73,52 70,59" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega i due angoli superiori al centro una seconda volta: le punte si fermano <b>sopra</b> il triangolo ribaltato.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Risvolta la puntina (lock)</title>
-          <polygon points="60,44 88,88 88,138 32,138 32,88" class="paper"/>
-          <polygon points="46,116 74,116 60,136" class="flap"/>
-          <line x1="46" y1="116" x2="74" y2="116" class="fold"/>
-          <path d="M60 132 q0 -10 0 -16" class="arrow"/><polygon points="60,116 55,123 65,123" class="arrowhead"/>
-          <text x="60" y="148" text-anchor="middle" class="lbl">lock</text>
-        </svg>
-        <span class="txt"><b>Risvolta in su la puntina</b> che spunta: questo è il "lock" che blocca le quattro pieghe insieme.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Piega a metà</title>
-          <polygon points="60,44 88,88 88,138 32,138 32,88" class="paper"/>
-          <line x1="60" y1="40" x2="60" y2="142" class="fold"/>
-          <path d="M82 60 Q60 50 68 72" class="arrow"/><polygon points="68,72 62,68 69,65" class="arrowhead"/>
-        </svg>
-        <span class="txt">Piega l'aereo a metà lungo la linea centrale, con il lock all'esterno.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Crea le ali</title>
-          <polygon points="14,75 106,48 106,102" class="paper"/>
-          <line x1="22" y1="73" x2="104" y2="60" class="fold"/>
-          <path d="M60 70 q5 14 0 22" class="arrow"/><polygon points="60,92 55,86 65,86" class="arrowhead"/>
-          <text x="60" y="120" text-anchor="middle" class="lbl">vista laterale</text>
-        </svg>
-        <span class="txt">Forma le <b>ali</b> piegando ciascun lato giù fino al bordo inferiore. Mantieni le due ali identiche.</span>
-      </li>
-      <li>
-        <svg class="dgm" viewBox="0 0 120 150" role="img"><title>Apri a V con flaps</title>
-          <polygon points="60,16 90,130 60,114 30,130" class="paper"/>
-          <line x1="38" y1="124" x2="50" y2="120" class="fold"/><line x1="82" y1="124" x2="70" y2="120" class="fold"/>
-          <path d="M40 140 Q42 130 45 133" class="arrow"/><polygon points="45,133 39,132 43,127" class="arrowhead"/>
-          <path d="M80 140 Q78 130 75 133" class="arrow"/><polygon points="75,133 81,132 77,127" class="arrowhead"/>
-          <text x="60" y="148" text-anchor="middle" class="lbl">flaps se serve</text>
-        </svg>
-        <span class="txt">Apri a V leggera. Rifinisci con piccoli flaps posteriori solo se necessario.</span>
-      </li>
-    </ol>
     <div class="tuning">
       <h4>🔧 Messa a punto</h4>
       <ul>
@@ -732,24 +398,6 @@
   </div>
 </div>
 
-<!-- ===== Overlay: lightbox zoom singola immagine ===== -->
-<div class="overlay" id="lightbox" hidden aria-modal="true" role="dialog">
-  <div class="ov-top">
-    <span class="t">🔍 Ingrandimento diagramma</span>
-    <span class="ov-spacer"></span>
-    <button class="ov-close" id="lbClose" aria-label="Chiudi">✕</button>
-  </div>
-  <div class="stage" id="lbStage">
-    <div class="zc" id="lbZc"></div>
-    <div class="zoomhint">Doppio click / rotella: zoom · trascina: sposta · pizzica su touch</div>
-    <div class="zoombar">
-      <button data-z="out" aria-label="Riduci">−</button>
-      <button data-z="reset" aria-label="Reimposta">⟳</button>
-      <button data-z="in" aria-label="Ingrandisci">+</button>
-    </div>
-  </div>
-</div>
-
 <!-- ===== Contenitore stampa PDF A4 ===== -->
 <div class="print-sheet" id="printSheet"></div>
 
@@ -757,76 +405,54 @@
 (function(){
   "use strict";
 
-  /* ---------- controller zoom riutilizzabile ---------- */
-  function makeZoom(stage, zc){
-    let scale=1, tx=0, ty=0, drag=false, sx=0, sy=0, ox0=0, oy0=0, pinch=null;
-    const pts=new Map();
-    function apply(){
-      zc.style.transform="translate("+tx+"px,"+ty+"px) scale("+scale+")";
-      stage.style.cursor = scale>1 ? "grab" : "zoom-in";
-    }
-    function reset(){ scale=1; tx=0; ty=0; apply(); }
-    function zoomAt(cx,cy,factor){
-      const ns=Math.min(6, Math.max(1, scale*factor));
-      const r=stage.getBoundingClientRect();
-      const px=cx-r.left, py=cy-r.top;
-      tx = px-(px-tx)*(ns/scale);
-      ty = py-(py-ty)*(ns/scale);
-      scale=ns;
-      if(scale===1){ tx=0; ty=0; }
-      apply();
-    }
-    function centerZoom(f){ const r=stage.getBoundingClientRect(); zoomAt(r.left+r.width/2, r.top+r.height/2, f); }
-
-    stage.addEventListener("wheel",function(e){ e.preventDefault(); zoomAt(e.clientX,e.clientY, e.deltaY<0?1.18:1/1.18); },{passive:false});
-    stage.addEventListener("dblclick",function(e){ if(scale>1) reset(); else zoomAt(e.clientX,e.clientY,2.2); });
-
-    stage.addEventListener("pointerdown",function(e){
-      pts.set(e.pointerId,e);
-      if(scale>1 && pts.size===1){ drag=true; try{stage.setPointerCapture(e.pointerId);}catch(_){}
-        sx=e.clientX; sy=e.clientY; ox0=tx; oy0=ty; stage.style.cursor="grabbing"; }
-    });
-    stage.addEventListener("pointermove",function(e){
-      if(pts.has(e.pointerId)) pts.set(e.pointerId,e);
-      if(pts.size===2){
-        const v=[...pts.values()];
-        const dist=Math.hypot(v[0].clientX-v[1].clientX, v[0].clientY-v[1].clientY);
-        const mx=(v[0].clientX+v[1].clientX)/2, my=(v[0].clientY+v[1].clientY)/2;
-        if(pinch!=null && dist>0) zoomAt(mx,my, dist/pinch);
-        pinch=dist; drag=false; return;
-      }
-      if(drag){ tx=ox0+(e.clientX-sx); ty=oy0+(e.clientY-sy); apply(); }
-    });
-    function up(e){ pts.delete(e.pointerId); if(pts.size<2) pinch=null; if(pts.size===0){ drag=false; if(scale>1) stage.style.cursor="grab"; } }
-    stage.addEventListener("pointerup",up);
-    stage.addEventListener("pointercancel",up);
-    stage.addEventListener("pointerleave",function(e){ if(drag){ drag=false; up(e); } });
-
-    stage.parentElement.querySelectorAll("[data-z]").forEach(function(b){
-      b.addEventListener("click",function(){
-        const k=b.getAttribute("data-z");
-        if(k==="in") centerZoom(1.35);
-        else if(k==="out") centerZoom(1/1.35);
-        else reset();
-      });
-    });
-    return { reset:reset };
-  }
-
-  const lbStage=document.getElementById("lbStage"), lbZc=document.getElementById("lbZc");
-  const lbZoom=makeZoom(lbStage,lbZc);
-
   /* ---------- helper overlay ---------- */
   function show(el){ el.hidden=false; document.body.style.overflow="hidden"; }
   function hide(el){ el.hidden=true; document.body.style.overflow=""; }
 
-  /* ---------- lightbox (ingrandimento immagine inline) ---------- */
-  const lightbox=document.getElementById("lightbox");
-  function openLightbox(svg){ lbZc.innerHTML=svg.outerHTML; show(lightbox); lbZoom.reset(); }
-  document.getElementById("lbClose").addEventListener("click",function(){ hide(lightbox); });
-  document.querySelectorAll(".dgm").forEach(function(svg){
-    svg.addEventListener("click",function(){ openLightbox(svg); });
-  });
+  /* ---------- testi dei passi (sorgente unica per guida e PDF) ---------- */
+  const STEP_TEXTS={
+    dardo:[
+      "Appoggia il foglio in <b>verticale</b>. Piegalo a metà nel senso della lunghezza per segnare la linea centrale, poi <b>riaprilo</b>.",
+      "Piega i <b>due angoli superiori</b> verso il centro, così che i bordi si incontrino sulla linea mediana. Ottieni una punta a triangolo.",
+      "Piega di nuovo i <b>nuovi bordi inclinati</b> verso la linea centrale. Il muso diventa lungo e affilato. Premi bene.",
+      "Ripeti ancora: piega i bordi lunghi verso il centro per un muso ancora più sottile e un baricentro spostato in avanti.",
+      "Chiudi l'aereo piegandolo <b>a metà lungo la linea centrale</b>, con le pieghe rivolte all'esterno.",
+      "Crea le <b>ali</b>: piega ciascun lato verso il basso allineando il bordo superiore con quello della pancia. Devono essere identiche.",
+      "Apri le ali in orizzontale formando una leggera <b>V</b> vista da davanti. Sei pronto al lancio."
+    ],
+    aliante:[
+      "Foglio in verticale. Piega a metà nel senso della lunghezza e <b>riapri</b> per avere la linea centrale.",
+      "Piega i due <b>angoli superiori</b> verso il centro: ottieni un triangolo in cima.",
+      "<b>Ribalta verso il basso la punta</b> del triangolo: l'apice arriva a 2-3 cm dal bordo della parte piegata. Smussa il muso e sposta il peso avanti.",
+      "Piega di nuovo i due angoli superiori verso il centro: i bordi inclinati scendono e si incontrano sopra la punta ribaltata.",
+      "<b>Risvolta in su la puntina</b> che sporge sotto: fa da fermo e tiene chiuse le pieghe. È il segreto della stabilità.",
+      "Piega l'aereo a metà lungo la linea centrale, con il fermo all'esterno.",
+      "Forma le <b>ali larghe</b> piegando ogni lato verso il basso. Lascia le ali ampie: più superficie = più portanza.",
+      "Apri le ali a leggera V. Aggiungi due piccoli <b>flaps</b> in su sul bordo posteriore."
+    ],
+    falco:[
+      "Foglio in verticale. Piega a metà nel lungo e <b>riapri</b> (linea centrale).",
+      "Piega i due <b>angoli superiori</b> al centro per fare il triangolo iniziale.",
+      "Ribalta in giù la <b>punta del triangolo</b> fino a ~4 cm dalla base, creando un bordo dritto in alto.",
+      "Porta di nuovo i <b>due angoli superiori al centro</b>, lasciando spuntare ~1 cm della punta sotto.",
+      "Piega in su quella <b>linguetta</b> sopra i lembi: blocca tutto e concentra il peso sul muso.",
+      "Piega l'intero aereo a metà lungo la linea centrale, lembi all'esterno.",
+      "Crea le <b>ali strette</b>: piega ogni lato verso il basso partendo da ~1,5 cm sopra la base. Ali sottili = poca resistenza.",
+      "Piega all'estremità di ogni ala una piccola <b>aletta verticale</b> (winglet) verso l'alto, alta ~1 cm: stabilizza la rotta.",
+      "Apri le ali piatte e orizzontali con leggerissimo diedro a V."
+    ],
+    nakamura:[
+      "Foglio in verticale. Piega a metà nel lungo e <b>riapri</b>.",
+      "Piega i due <b>angoli superiori</b> al centro: triangolo in cima.",
+      "Ribalta la <b>punta verso il basso</b>, fermandoti ~1,5 cm sopra dove finiscono i lembi (resta un piccolo bordo orizzontale in alto).",
+      "Piega i due angoli superiori al centro una seconda volta: le punte si fermano <b>sopra</b> il triangolo ribaltato.",
+      "<b>Risvolta in su la puntina</b> che spunta: questo è il \"lock\" che blocca le quattro pieghe insieme.",
+      "Piega l'aereo a metà lungo la linea centrale, con il lock all'esterno.",
+      "Forma le <b>ali</b> piegando ciascun lato giù fino al bordo inferiore. Mantieni le due ali identiche.",
+      "Apri a V leggera. Rifinisci con piccoli flaps posteriori solo se necessario."
+    ]
+  };
+  const PLANE_TYPE={dardo:"dardo",aliante:"aliante",avanzato:"falco",nakamura:"nakamura"};
 
   /* ---------- procedura guidata ---------- */
   const guide=document.getElementById("guide");
@@ -847,11 +473,9 @@
   }
   function goto(i){ cur=Math.max(0,Math.min(steps.length-1,i)); render(); }
   function openGuide(plane,title){
-    steps=[].map.call(plane.querySelectorAll("ol.steps > li"),function(li){
-      return { svg: li.querySelector("svg.dgm").outerHTML, txt: li.querySelector(".txt").innerHTML };
-    });
+    curPlaneType=PLANE_TYPE[plane.id]||"dardo";
+    steps=(STEP_TEXTS[curPlaneType]||[]).map(function(txt){ return { txt:txt }; });
     cur=0;
-    curPlaneType=({dardo:"dardo",aliante:"aliante",avanzato:"falco",nakamura:"nakamura"})[plane.id]||"dardo";
     gTitle.textContent=title;
     gDots.innerHTML="";
     steps.forEach(function(_,i){
@@ -901,11 +525,9 @@
       body+'<circle cx="105" cy="0" r="2.6" class="pc-dot"/></svg>';
   }
   function printPlane(plane,title){
-    const type=({dardo:"dardo",aliante:"aliante",avanzato:"falco",nakamura:"nakamura"})[plane.id]||"dardo";
+    const type=PLANE_TYPE[plane.id]||"dardo";
     const hasTip=({aliante:1,falco:1,nakamura:1})[type];
-    const stepsLis=[].map.call(plane.querySelectorAll("ol.steps > li"),function(li){
-      return '<li>'+li.querySelector(".txt").innerHTML+'</li>';
-    }).join("");
+    const stepsLis=(STEP_TEXTS[type]||[]).map(function(txt){ return '<li>'+txt+'</li>'; }).join("");
     const tuning=plane.querySelector(".tuning");
     let tips="";
     if(tuning){
@@ -925,29 +547,27 @@
   }
   window.addEventListener("afterprint",function(){ document.body.classList.remove("printing"); printSheet.innerHTML=""; });
 
-  /* ---------- inietta i pulsanti in ogni aeroplano ---------- */
+  /* ---------- inietta pulsanti e vista 3D in ogni aeroplano ---------- */
   [].slice.call(document.querySelectorAll(".plane")).forEach(function(plane){
-    const ol=plane.querySelector("ol.steps");
-    if(!ol) return;
+    const type=PLANE_TYPE[plane.id];
+    const meta=plane.querySelector(".meta");
+    if(!type || !meta || !STEP_TEXTS[type]) return;     // solo i 4 modelli
     const title=plane.querySelector("h2").textContent.trim();
     const bar=document.createElement("div");
     bar.className="plane-actions";
     bar.innerHTML='<button class="btn primary" type="button">▶ Procedura guidata a schermo intero</button>'+
                   '<button class="btn" type="button">⬇ Scheda PDF A4</button>';
-    plane.insertBefore(bar, ol);
     bar.children[0].addEventListener("click",function(){ openGuide(plane,title); });
     bar.children[1].addEventListener("click",function(){ printPlane(plane,title); });
     // contenitore vista 3D (riempito dallo script module Three.js)
-    const meta=plane.querySelector(".meta");
-    if(meta){
-      const v=document.createElement("div");
-      v.className="viewer3d";
-      v.dataset.type=({dardo:"dardo",aliante:"aliante",avanzato:"falco",nakamura:"nakamura"})[plane.id]||"dardo";
-      v.innerHTML='<span class="v3d-tag">🛩️ Vista 3D · aereo completo</span>'+
-                  '<span class="v3d-hint">Trascina per ruotare · rotella: zoom</span>'+
-                  '<span class="v3d-fallback">Vista 3D — caricamento…</span>';
-      meta.after(v);
-    }
+    const v=document.createElement("div");
+    v.className="viewer3d";
+    v.dataset.type=type;
+    v.innerHTML='<span class="v3d-tag">🛩️ Vista 3D · aereo completo</span>'+
+                '<span class="v3d-hint">Trascina per ruotare · rotella: zoom</span>'+
+                '<span class="v3d-fallback">Vista 3D — caricamento…</span>';
+    meta.after(v);     // ordine: meta → vista 3D → pulsanti
+    v.after(bar);
   });
   setTimeout(function(){
     if(!window.__v3dReady) document.querySelectorAll(".v3d-fallback, .f3-fallback").forEach(function(f){
@@ -961,8 +581,6 @@
       if(e.key==="ArrowRight"||e.key===" ") { e.preventDefault(); if(cur<steps.length-1) goto(cur+1); }
       else if(e.key==="ArrowLeft") goto(cur-1);
       else if(e.key==="Escape") closeGuide();
-    } else if(!lightbox.hidden){
-      if(e.key==="Escape") hide(lightbox);
     }
   });
 })();
