@@ -1189,9 +1189,10 @@ const FoldAnim = (function(){
   }
   // pre-calcola, per ogni step, le pieghe accumulate e il bend attivo
   let script=[], settledByStep=[], bendByStep=[], wingletByStep=[];
+  let keelByStep=[];
   function prepare(type){
     script=SCRIPTS[type]||SCRIPTS.dardo;
-    settledByStep=[]; bendByStep=[]; wingletByStep=[];
+    settledByStep=[]; bendByStep=[]; wingletByStep=[]; keelByStep=[];
     let acc=[], bend=null, wl=false;
     for(let i=0;i<script.length;i++){
       const st=script[i];
@@ -1200,6 +1201,7 @@ const FoldAnim = (function(){
       settledByStep[i]=computeSettled(acc);
       bendByStep[i]=bend;
       wingletByStep[i]=wl;
+      keelByStep[i]= bend!=null ? KA : 0;   // la chiglia si forma appena si piega a metà
     }
   }
 
@@ -1219,16 +1221,31 @@ const FoldAnim = (function(){
     out[o+2] = A.az + rz*c + kxz*s + A.uz*kdotr*(1-c);
   }
 
-  // ---- pose: flette il foglio piegato in una V (piega a metà → ali) ----
-  function poseInto(P, S, bend, winglet){
-    const cb=Math.cos(bend), sb=Math.sin(bend);
+  // ---- pose: chiglia centrale che pende sotto + ali ai lati ----
+  // wa = angolo ala dall'orizzontale · ka = angolo chiglia (quanto pende il corpo)
+  // a wa=ka=0 il foglio è piatto; con ka grande il corpo scende, con wa piccolo le ali sono aperte
+  const KW=14;                              // semi-larghezza della chiglia (il corpo da impugnare)
+  const KA=1.35;                            // quanto pende la chiglia ad aereo finito (~vert.)
+  function poseInto(P, S, wa, ka, winglet){
+    const cw=Math.cos(wa), sw=Math.sin(wa), ck=Math.cos(ka), sk=Math.sin(ka);
+    const rootX=KW*ck;                       // x della radice dell'ala dopo la piega chiglia
     for(let i=0;i<N;i++){
       const fx=S.sx[i], fz=S.sz[i], fy=S.sy[i];
-      let y = fy*0.5 + Math.abs(fx)*sb;
-      if(winglet){ const t=Math.abs(fx)/(W/2); if(t>0.85) y += (t-0.85)*W*0.8; } // piccola winglet sul bordo
-      P[i*3]   = fx*cb;
-      P[i*3+1] = y;
-      P[i*3+2] = fz;
+      const ax=Math.abs(fx), sgn=fx<0?-1:1;
+      if(ax<=KW){
+        // chiglia/fusoliera: scende sotto le ali (spina = punto più basso)
+        P[i*3]   = fx*ck;
+        P[i*3+1] = -(KW-ax)*sk + fy*0.25;
+        P[i*3+2] = fz;
+      } else {
+        // ala: ruota verso l'alto/esterno dalla radice
+        const d=ax-KW;
+        let y=d*sw + fy*0.25;
+        if(winglet){ const t=ax/(W/2); if(t>0.85) y += (t-0.85)*W*0.8; } // piccola winglet sul bordo
+        P[i*3]   = sgn*(rootX + d*cw);
+        P[i*3+1] = y;
+        P[i*3+2] = fz;
+      }
     }
   }
   function flatInto(P, S){
@@ -1382,14 +1399,14 @@ const FoldAnim = (function(){
         for(const i of moving){ rotAxis(o,0,S.sx[i],S.sy[i],S.sz[i],A,theta); P[i*3]=o[0];P[i*3+1]=o[1];P[i*3+2]=o[2]; }
       }, done(){ flatInto(P,S); commit(); } };
   }
-  // anima flessione del bend
-  function animateBend(S, fromB, toB, winglet, dur){
-    return { step(e){ poseInto(P, S, fromB+(toB-fromB)*e, winglet); } };
+  // anima flessione: interpola sia l'angolo ala (wa) sia quello chiglia (ka)
+  function animateBend(S, fromWA, toWA, fromKA, toKA, winglet, dur){
+    return { step(e){ poseInto(P, S, fromWA+(toWA-fromWA)*e, fromKA+(toKA-fromKA)*e, winglet); } };
   }
 
   function display(i){
     const S=settledByStep[i], b=bendByStep[i];
-    if(b!=null) poseInto(P,S,b,wingletByStep[i]); else flatInto(P,S);
+    if(b!=null) poseInto(P,S,b,keelByStep[i],wingletByStep[i]); else flatInto(P,S);
     commit();
   }
   // costruisce l'animazione del passo i (riusata da show e replay)
@@ -1400,7 +1417,11 @@ const FoldAnim = (function(){
     let a=null;
     if(st.mark) a=animateMark(prevS, dur);
     else if(st.folds) a=animateFolds(prevS, st.folds, settledByStep[i], dur);
-    else if(st.bend!=null){ const fromB=bendByStep[i-1]!=null?bendByStep[i-1]:0; a=animateBend(settledByStep[i], fromB, st.bend, wingletByStep[i], dur); }
+    else if(st.bend!=null){
+      const fromWA = (i>0 && bendByStep[i-1]!=null) ? bendByStep[i-1] : 0;
+      const fromKA = (i>0 && keelByStep[i-1]) ? keelByStep[i-1] : 0;
+      a=animateBend(settledByStep[i], fromWA, st.bend, fromKA, keelByStep[i], wingletByStep[i], dur);
+    }
     if(a){ a.t0=performance.now(); a.dur=dur; }
     return a;
   }
