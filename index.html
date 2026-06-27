@@ -59,6 +59,9 @@
   .meta{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;font-size:.92rem;color:var(--muted)}
   .meta span b{color:var(--ink)}
 
+  /* i passaggi 2D non si mostrano più in pagina: tutto è nella procedura guidata.
+     restano nel DOM solo come sorgente testi per la guida e per il PDF */
+  ol.steps{display:none}
   ol.steps{counter-reset:step;list-style:none;padding:0;margin:0}
   ol.steps li{position:relative;display:flex;gap:14px;align-items:center;padding:12px 14px;margin-bottom:10px;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:12px}
   ol.steps li::before{counter-increment:step;content:counter(step);flex:0 0 30px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#06223a;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:.95rem;align-self:flex-start}
