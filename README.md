@@ -1,16 +1,20 @@
-# ✈️ PaperPlane — Aeroplani di Carta che Volano Lontano
+# 🪶 PaperPlane — Aeroplani di Carta che Volano Lontano
 
 Guida interattiva, in italiano, per costruire passo dopo passo quattro aeroplani di
-carta ottimizzati per il volo. Una singola pagina HTML autonoma, senza dipendenze
-esterne e senza build: basta aprire `index.html` nel browser.
+carta ottimizzati per il volo. Una singola pagina HTML, leggera e (quasi) senza
+dipendenze: basta aprire `index.html` nel browser.
+
+**🌐 Sito live:** https://tongatron.org/paperplane/
 
 ## ✨ Funzionalità
 
 - **4 modelli** dal più facile al più tecnico:
   - **Il Dardo** — veloce e dritto, per la distanza pura
   - **L'Aliante** — planata dolce, massimo tempo di volo
-  - **Il Falco** — design da competizione, distanza massima
+  - **Il Falco** — design da competizione, distanza massima (con winglet)
   - **Nakamura Lock** — il più stabile e affidabile
+- **Vista 3D interattiva** dell'aereo completo per ogni modello: rotazione
+  automatica, trascinamento per ruotare e rotella per lo zoom (Three.js/WebGL).
 - **Diagrammi SVG per ogni piega**, con linguaggio visivo coerente
   (linee di piega tratteggiate, frecce di movimento, linea centrale di riferimento).
 - **Procedura guidata a schermo intero** per ogni aereo, un passo alla volta,
@@ -33,16 +37,18 @@ python3 -m http.server 8123
 # poi apri http://localhost:8123/index.html
 ```
 
-## 🌐 Pubblicazione con GitHub Pages
+## 🌐 Pubblicazione
 
-Il file principale si chiama `index.html`, quindi la pagina è pubblicabile
-direttamente: nelle impostazioni del repository abilita **Pages** sul branch
-principale (cartella `/root`) e il sito sarà online.
+Il sito è pubblicato con **GitHub Pages** ed è servito sotto il dominio
+personalizzato `tongatron.org` (sito utente), quindi è raggiungibile su
+**https://tongatron.org/paperplane/**. Il file principale è `index.html`.
 
 ## 🛠️ Tecnologia
 
-HTML + CSS + JavaScript vanilla, tutto in un unico file. I diagrammi sono SVG
-disegnati a mano. Nessun framework, nessuna dipendenza.
+HTML + CSS + JavaScript vanilla, tutto in un unico file. I diagrammi delle pieghe
+sono SVG disegnati a mano. L'unica dipendenza esterna è **Three.js** (caricato da
+CDN) per le viste 3D; il resto della pagina funziona anche offline. Le viste 3D
+vengono renderizzate solo quando sono visibili a schermo (IntersectionObserver).
 
 ## 📄 Licenza
 
