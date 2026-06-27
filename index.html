@@ -154,55 +154,51 @@
 
   /* ---- pannello pieghe 3D dentro la procedura guidata ---- */
   .guide-body{display:flex;flex:1;min-height:0}
-  .fold3d{position:relative;flex:1 1 46%;min-width:0;
-    background:radial-gradient(130% 130% at 50% 0%,#16264a 0%,#0e1830 60%);
-    border-right:1px solid var(--line)}
+  .fold3d{position:relative;flex:1 1 auto;min-width:0;
+    background:radial-gradient(130% 130% at 50% 0%,#16264a 0%,#0e1830 60%)}
   .fold3d canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
   .fold3d canvas:active{cursor:grabbing}
   .fold3d .f3-tag{position:absolute;left:14px;top:12px;color:var(--accent);font-size:.8rem;
     border:1px solid var(--line);padding:4px 12px;border-radius:999px;background:rgba(14,24,48,.7);pointer-events:none}
-  .fold3d .f3-hint{position:absolute;right:14px;bottom:12px;color:var(--muted);font-size:.8rem;pointer-events:none}
-  .fold3d .f3-replay{position:absolute;right:14px;top:12px;z-index:2;cursor:pointer;font:inherit;font-size:.82rem;
+  .fold3d .f3-hint{position:absolute;left:14px;bottom:12px;color:var(--muted);font-size:.8rem;pointer-events:none;max-width:60%}
+  .fold3d .f3-controls{position:absolute;right:14px;top:12px;z-index:2;display:flex;gap:8px}
+  .fold3d .f3-btn{cursor:pointer;font:inherit;font-size:.82rem;
     display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:999px;
     border:1px solid var(--line);background:rgba(14,24,48,.78);color:var(--ink);transition:.15s}
-  .fold3d .f3-replay:hover{border-color:var(--accent);color:var(--accent)}
-  .fold3d .f3-replay:active{transform:scale(.96)}
+  .fold3d .f3-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .fold3d .f3-btn:active{transform:scale(.96)}
   .fold3d .f3-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     color:var(--muted);text-align:center;padding:24px;font-size:.9rem}
-  .guide-body .stage{flex:1 1 54%}
   @media(max-width:760px){
-    .guide-body{flex-direction:column}
-    .fold3d{flex:0 0 40%;border-right:none;border-bottom:1px solid var(--line)}
-    .guide-body .stage{flex:1 1 auto}
     .fold3d .f3-hint{display:none}
   }
 
-  /* ---- scheda PDF A4 stampabile ---- */
+  /* ---- scheda PDF A4 stampabile (foglio con linee di piega) ---- */
   .print-sheet{display:none}
   @media print{
-    @page{size:A4;margin:12mm}
+    @page{size:A4;margin:10mm}
     html,body{background:#fff !important}
     body.printing > *:not(.print-sheet){display:none !important}
     .print-sheet{display:block !important;color:#111;font-family:inherit;
       -webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .print-sheet h1{font-size:20pt;margin:0 0 2mm}
-    .print-sheet .ph{color:#444;margin:0 0 5mm;font-size:10pt}
-    .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm}
-    .pcard{border:1px solid #ccc;border-radius:3mm;padding:3mm;break-inside:avoid;text-align:center}
-    .pcard .pn{display:inline-flex;width:7mm;height:7mm;border-radius:50%;background:#1577c4;color:#fff;
-      align-items:center;justify-content:center;font-weight:700;font-size:9pt;margin-bottom:1.5mm}
-    .pcard svg{width:80%;height:auto;display:block;margin:0 auto}
-    .pcard .pt{font-size:8.5pt;line-height:1.35;color:#222;margin-top:2mm;text-align:left}
+    .print-sheet h1{font-size:17pt;margin:0 0 1mm}
+    .print-sheet .ph{color:#444;margin:0 0 3mm;font-size:9pt;line-height:1.5}
+    .lg{display:inline-flex;align-items:center;gap:3px;margin-right:10px;white-space:nowrap}
+    .sw{display:inline-block;width:14px;height:0;border-top-width:2px}
+    .sw-val{border-top:2px dashed #1577c4} .sw-tip{border-top:2px dashed #d77800}
+    .sw-ref{border-top:2px dashed #999}
+    .psvg{display:block;width:auto;max-width:100%;height:auto;max-height:235mm;margin:0 auto}
+    .pc-border{fill:#fff;stroke:#bbb;stroke-width:0.5}
+    .pc-ref{stroke:#999;stroke-width:0.5;stroke-dasharray:2 2}
+    .pc-val{stroke:#1577c4;stroke-width:0.9;stroke-dasharray:4 2.4}
+    .pc-tip{stroke:#d77800;stroke-width:0.9;stroke-dasharray:4 2.4}
+    .pc-dot{fill:#1577c4}
+    .pc-num{fill:#1577c4;font-size:6px;font-weight:700;font-family:sans-serif}
+    .psteps{break-before:page;padding-top:2mm}
+    .psteps h2{font-size:13pt;margin:0 0 3mm}
+    .psteps ol{margin:0;padding-left:7mm;font-size:10pt;line-height:1.5}
+    .psteps li{margin-bottom:2.5mm}
     .ptips{margin-top:5mm;font-size:9pt;color:#333;border-top:1px solid #ccc;padding-top:3mm}
-    .print-sheet .dgm{background:#fff;border:1px solid #999}
-    .print-sheet .paper{fill:#fff;stroke:#333}
-    .print-sheet .flap{fill:#eaeaea;stroke:#333}
-    .print-sheet .fold{stroke:#1577c4;stroke-width:2.4}
-    .print-sheet .ref{stroke:#aaa}
-    .print-sheet .arrow{stroke:#d77800;stroke-width:2.4}
-    .print-sheet .arrowhead{fill:#d77800}
-    .print-sheet .fuse{stroke:#333}
-    .print-sheet .lbl{fill:#555}
   }
 </style>
 </head>
@@ -717,18 +713,12 @@
   <div class="guide-body">
     <div class="fold3d" id="gFold3d">
       <span class="f3-tag">🧩 Pieghe 3D animate</span>
-      <button class="f3-replay" id="gReplay" type="button" title="Rivedi l'animazione">↻ Rivedi</button>
-      <span class="f3-hint">Trascina per ruotare · rotella: zoom</span>
-      <span class="f3-fallback">Animazione 3D — caricamento…</span>
-    </div>
-    <div class="stage" id="gStage">
-      <div class="zc" id="gZc"></div>
-      <div class="zoomhint">Doppio click / rotella: zoom · trascina: sposta · pizzica su touch</div>
-      <div class="zoombar">
-        <button data-z="out" aria-label="Riduci">−</button>
-        <button data-z="reset" aria-label="Reimposta">⟳</button>
-        <button data-z="in" aria-label="Ingrandisci">+</button>
+      <div class="f3-controls">
+        <button class="f3-btn" id="gStop" type="button" title="Ferma / riprendi l'animazione">⏸ Stop</button>
+        <button class="f3-btn" id="gRestart" type="button" title="Ricomincia l'animazione">↻ Ricomincia</button>
       </div>
+      <span class="f3-hint">Trascina per ruotare · rotella: zoom · l'animazione va avanti e indietro</span>
+      <span class="f3-fallback">Animazione 3D — caricamento…</span>
     </div>
   </div>
   <div class="guide-text" id="gText"></div>
@@ -820,9 +810,7 @@
     return { reset:reset };
   }
 
-  const gStage=document.getElementById("gStage"), gZc=document.getElementById("gZc");
   const lbStage=document.getElementById("lbStage"), lbZc=document.getElementById("lbZc");
-  const gZoom=makeZoom(gStage,gZc);
   const lbZoom=makeZoom(lbStage,lbZc);
 
   /* ---------- helper overlay ---------- */
@@ -847,13 +835,11 @@
   let curPlaneType="dardo";
   function render(){
     const s=steps[cur];
-    gZc.innerHTML=s.svg;
     gText.innerHTML=s.txt;
     gCount.textContent="Passo "+(cur+1)+" / "+steps.length;
     gPrev.disabled = cur===0;
     gNext.textContent = cur===steps.length-1 ? "Fine ✓" : "Avanti ›";
     [].forEach.call(gDots.children,function(d,i){ d.classList.toggle("on", i===cur); });
-    gZoom.reset();
     if(window.FoldAnim) try{ window.FoldAnim.show(cur); }catch(_){}
   }
   function goto(i){ cur=Math.max(0,Math.min(steps.length-1,i)); render(); }
@@ -885,14 +871,37 @@
   gNext.addEventListener("click",function(){ if(cur===steps.length-1) closeGuide(); else goto(cur+1); });
   document.getElementById("gClose").addEventListener("click",closeGuide);
 
-  /* ---------- stampa scheda PDF A4 ---------- */
+  /* ---------- stampa scheda PDF A4: foglio con le linee di piega ---------- */
   const printSheet=document.getElementById("printSheet");
+  // linee di piega del foglio piatto, in mm su A4 (210×297, muso in alto)
+  function creasePattern(type){
+    const lines=[
+      {x1:105,y1:0,x2:105,y2:297,c:"pc-ref",n:"1"},   // linea centrale (piega a metà e riapri)
+      {x1:105,y1:0,x2:0,  y2:105,c:"pc-val",n:"2"},   // angolo sinistro al centro
+      {x1:105,y1:0,x2:210,y2:105,c:"pc-val",n:"2"}    // angolo destro al centro
+    ];
+    const tipY={aliante:79, falco:96, nakamura:70}[type];
+    if(tipY!=null) lines.push({x1:0,y1:tipY,x2:210,y2:tipY,c:"pc-tip",n:"3"}); // ribalta la punta
+    return lines;
+  }
+  function sheetSVG(type){
+    const lines=creasePattern(type);
+    let body="";
+    lines.forEach(function(L){ body+='<line x1="'+L.x1+'" y1="'+L.y1+'" x2="'+L.x2+'" y2="'+L.y2+'" class="'+L.c+'"/>'; });
+    // numerini accanto all'inizio di ogni piega
+    body+='<text x="111" y="150" class="pc-num">1</text>';
+    body+='<text x="60" y="58" class="pc-num">2</text><text x="146" y="58" class="pc-num">2</text>';
+    const tipY={aliante:79, falco:96, nakamura:70}[type];
+    if(tipY!=null) body+='<text x="6" y="'+(tipY-2)+'" class="pc-num">3</text>';
+    return '<svg class="psvg" viewBox="-2 -2 214 301" preserveAspectRatio="xMidYMid meet">'+
+      '<rect x="0" y="0" width="210" height="297" class="pc-border"/>'+
+      body+'<circle cx="105" cy="0" r="2.6" class="pc-dot"/></svg>';
+  }
   function printPlane(plane,title){
-    const lis=[].slice.call(plane.querySelectorAll("ol.steps > li"));
-    const cards=lis.map(function(li,i){
-      return '<div class="pcard"><span class="pn">'+(i+1)+'</span>'+
-        li.querySelector("svg.dgm").outerHTML+
-        '<div class="pt">'+li.querySelector(".txt").innerHTML+'</div></div>';
+    const type=({dardo:"dardo",aliante:"aliante",avanzato:"falco",nakamura:"nakamura"})[plane.id]||"dardo";
+    const hasTip=({aliante:1,falco:1,nakamura:1})[type];
+    const stepsLis=[].map.call(plane.querySelectorAll("ol.steps > li"),function(li){
+      return '<li>'+li.querySelector(".txt").innerHTML+'</li>';
     }).join("");
     const tuning=plane.querySelector(".tuning");
     let tips="";
@@ -900,9 +909,14 @@
       const items=[].map.call(tuning.querySelectorAll("li"),function(l){ return l.textContent.trim(); });
       tips='<div class="ptips"><b>Messa a punto:</b> '+items.join(" &nbsp;·&nbsp; ")+'</div>';
     }
-    printSheet.innerHTML='<h1>'+title+'</h1>'+
-      '<p class="ph">Scheda di costruzione · piega lungo le linee tratteggiate, segui le frecce · occorre 1 foglio A4</p>'+
-      '<div class="pgrid">'+cards+'</div>'+tips;
+    printSheet.innerHTML=
+      '<h1>'+title+' · foglio da piegare</h1>'+
+      '<p class="ph">Stampa questo foglio A4 e piega lungo le linee disegnate, poi completa con i passi alla pagina seguente. '+
+        '<span class="lg"><span class="sw sw-val"></span>piega principale</span>'+
+        (hasTip?'<span class="lg"><span class="sw sw-tip"></span>ribalta la punta</span>':'')+
+        '<span class="lg"><span class="sw sw-ref"></span>linea centrale</span></p>'+
+      sheetSVG(type)+
+      '<div class="psteps"><h2>'+title+' · passi di piega</h2><ol>'+stepsLis+'</ol>'+tips+'</div>';
     document.body.classList.add("printing");
     window.print();
   }
@@ -1117,44 +1131,44 @@ const FoldAnim = (function(){
   // ogni passo: {mark} marca la linea centrale · {folds:[...]} pieghe nette · {bend, tip} flessione finale
   const SCRIPTS = {
     dardo: [
-      {mark:true},
-      {folds:corners},
-      {folds:edges(30)},
-      {folds:edges(15)},
-      {bend:1.30},
-      {bend:0.78},
-      {bend:0.34}
+      {mark:true},                 // 1 · segna la linea centrale
+      {folds:corners},             // 2 · angoli superiori al centro
+      {folds:edges(30)},           // 3 · bordi inclinati al centro
+      {folds:edges(15)},           // 4 · ripeti i bordi (muso affilato)
+      {bend:1.55},                 // 5 · piega a metà (ali quasi verticali)
+      {bend:0.72},                 // 6 · crea le ali (piega in giù)
+      {bend:0.30}                  // 7 · apri a V → dardo finito
     ],
     aliante: [
-      {mark:true},
-      {folds:corners},
-      {folds:[tip(-40)]},
-      {folds:cornersAt(-40)},
-      {folds:[lock(58)]},
-      {bend:1.32},
-      {bend:0.82},
-      {bend:0.46}
+      {mark:true},                 // 1
+      {folds:corners},             // 2
+      {folds:[tip(-40)]},          // 3 · ribalta la punta in basso
+      {folds:cornersAt(-40)},      // 4 · angoli al centro di nuovo
+      {folds:[lock(58)]},          // 5 · risvolta la puntina (lock)
+      {bend:1.55},                 // 6 · piega a metà
+      {bend:0.80},                 // 7 · ali larghe
+      {bend:0.40}                  // 8 · apri a V con flaps → aliante finito
     ],
     falco: [
-      {mark:true},
-      {folds:corners},
-      {folds:[tip(-30)]},
-      {folds:cornersAt(-30)},
-      {folds:[lock(58)]},
-      {bend:1.38},
-      {bend:0.74},
-      {bend:0.50, winglet:true},
-      {bend:0.36, winglet:true}
+      {mark:true},                 // 1
+      {folds:corners},             // 2
+      {folds:[tip(-30)]},          // 3
+      {folds:cornersAt(-30)},      // 4
+      {folds:[lock(58)]},          // 5
+      {bend:1.55},                 // 6 · piega a metà
+      {bend:0.66},                 // 7 · ali strette
+      {bend:0.44, winglet:true},   // 8 · winglet verticali
+      {bend:0.26, winglet:true}    // 9 · apri piatto → falco finito
     ],
     nakamura: [
-      {mark:true},
-      {folds:corners},
-      {folds:[tip(-45)]},
-      {folds:cornersAt(-45)},
-      {folds:[lock(58)]},
-      {bend:1.30},
-      {bend:0.80},
-      {bend:0.42}
+      {mark:true},                 // 1
+      {folds:corners},             // 2
+      {folds:[tip(-45)]},          // 3
+      {folds:cornersAt(-45)},      // 4
+      {folds:[lock(58)]},          // 5
+      {bend:1.55},                 // 6 · piega a metà
+      {bend:0.76},                 // 7 · crea le ali
+      {bend:0.36}                  // 8 · apri a V → nakamura finito
     ]
   };
 
@@ -1211,7 +1225,7 @@ const FoldAnim = (function(){
     for(let i=0;i<N;i++){
       const fx=S.sx[i], fz=S.sz[i], fy=S.sy[i];
       let y = fy*0.5 + Math.abs(fx)*sb;
-      if(winglet){ const t=Math.abs(fx)/(W/2); if(t>0.72) y += (t-0.72)*W*0.9; }
+      if(winglet){ const t=Math.abs(fx)/(W/2); if(t>0.85) y += (t-0.85)*W*0.8; } // piccola winglet sul bordo
       P[i*3]   = fx*cb;
       P[i*3+1] = y;
       P[i*3+2] = fz;
@@ -1239,7 +1253,7 @@ const FoldAnim = (function(){
 
   // ---- setup three ----
   let scene, camera, renderer, controls, geo, mesh, P, el, running=false, raf=0;
-  let crease, creasePos, shownStep=-1, anim=null, replayWired=false;
+  let crease, creasePos, shownStep=-1, anim=null, paused=false, btnsWired=false;
 
   function ensure(container){
     el=container;
@@ -1282,10 +1296,17 @@ const FoldAnim = (function(){
     camera.position.set(0, W*1.7, W*1.6); controls.target.set(0,0,0); controls.update();
 
     new ResizeObserver(resize).observe(el);
-    if(!replayWired){ const rb=document.getElementById('gReplay');
-      if(rb){ rb.addEventListener('click', replay); replayWired=true; } }
+    if(!btnsWired){
+      const bs=document.getElementById('gStop'), br=document.getElementById('gRestart');
+      if(bs) bs.addEventListener('click', togglePause);
+      if(br) br.addEventListener('click', restart);
+      btnsWired=true;
+    }
     const fb=el.querySelector('.f3-fallback'); if(fb) fb.remove();
   }
+  function updateButtons(){ const b=document.getElementById('gStop'); if(b) b.textContent = paused ? '▶ Riprendi' : '⏸ Stop'; }
+  function togglePause(){ paused=!paused; if(!paused && anim) anim.t0=performance.now(); updateButtons(); }
+  function restart(){ if(!script.length || shownStep<0) return; anim=buildAnim(shownStep); paused=false; setCreaseForStep(shownStep); updateButtons(); }
 
   // ---- linea di piega: ritaglia la linea al riquadro del foglio ----
   function clipLine(ax,az,bx,bz, xmin,xmax,zmin,zmax){
@@ -1328,16 +1349,22 @@ const FoldAnim = (function(){
 
   function commit(){ geo.attributes.position.needsUpdate=true; geo.computeVertexNormals(); }
 
+  const HOLD=700;                            // pausa ai due estremi (ms)
   function tick(){
     if(!running) return;
     raf=requestAnimationFrame(tick);
-    if(anim){
+    if(anim && !paused){
       const now=performance.now();
-      let p=(now-anim.t0)/anim.dur; if(p>=1){ p=1; }
-      const e=p<.5 ? 4*p*p*p : 1-Math.pow(-2*p+2,3)/2;  // easeInOutCubic
+      const seg=anim.dur+HOLD, period=2*seg;
+      const t=(now-anim.t0)%period;
+      let p;
+      if(t<anim.dur)        p=t/anim.dur;                 // avanti 0→1
+      else if(t<seg)        p=1;                          // tiene il risultato
+      else if(t<seg+anim.dur) p=1-(t-seg)/anim.dur;       // indietro 1→0 (rewind)
+      else                  p=0;                          // tiene il foglio iniziale
+      const e=p<.5 ? 4*p*p*p : 1-Math.pow(-2*p+2,3)/2;    // easeInOutCubic
       anim.step(e);
       commit();
-      if(p>=1){ anim.done&&anim.done(); anim=null; }
     }
     controls.update();
     renderer.render(scene,camera);
@@ -1388,17 +1415,12 @@ const FoldAnim = (function(){
   function show(i){
     if(!renderer || !script.length) return;
     if(i===shownStep) return;
-    const animate = (i===shownStep+1);
     setCreaseForStep(i);
-    if(animate){ const a=buildAnim(i); if(a) anim=a; else { anim=null; display(i); } }
-    else { anim=null; display(i); }
+    // animazione continua avanti/indietro del passo corrente
+    const a=buildAnim(i);
+    if(a){ anim=a; paused=false; } else { anim=null; display(i); }
     shownStep=i;
-  }
-  function replay(){
-    if(!renderer || !script.length || shownStep<0) return;
-    const a=buildAnim(shownStep);
-    setCreaseForStep(shownStep);
-    if(a) anim=a; else display(shownStep);
+    updateButtons();
   }
   // anima più pieghe simultanee (es. i due angoli) verso lo stato finale
   function animateFolds(prevS, folds, finalS, dur){
@@ -1426,7 +1448,7 @@ const FoldAnim = (function(){
   }
   function close(){ running=false; cancelAnimationFrame(raf); if(crease) crease.visible=false; }
 
-  return { open, show, close, replay };
+  return { open, show, close, togglePause, restart };
 })();
 window.FoldAnim = FoldAnim;
 
