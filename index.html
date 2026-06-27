@@ -139,6 +139,19 @@
     .zoomhint{display:none}
   }
 
+  /* ---- visualizzatore 3D ---- */
+  .viewer3d{position:relative;width:100%;height:320px;margin:4px 0 24px;border:1px solid var(--line);
+    border-radius:16px;overflow:hidden;cursor:grab;
+    background:radial-gradient(130% 130% at 50% 0%,#16264a 0%,#0e1830 60%)}
+  .viewer3d:active{cursor:grabbing}
+  .viewer3d canvas{display:block;width:100%;height:100%;touch-action:none}
+  .viewer3d .v3d-tag{position:absolute;left:14px;top:12px;color:var(--accent);font-size:.8rem;
+    border:1px solid var(--line);padding:4px 12px;border-radius:999px;background:rgba(14,24,48,.7);pointer-events:none}
+  .viewer3d .v3d-hint{position:absolute;right:14px;bottom:12px;color:var(--muted);font-size:.82rem;pointer-events:none}
+  .viewer3d .v3d-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--muted);text-align:center;padding:24px;font-size:.92rem}
+  @media(max-width:560px){ .viewer3d{height:240px} }
+
   /* ---- scheda PDF A4 stampabile ---- */
   .print-sheet{display:none}
   @media print{
@@ -869,7 +882,23 @@
     plane.insertBefore(bar, ol);
     bar.children[0].addEventListener("click",function(){ openGuide(plane,title); });
     bar.children[1].addEventListener("click",function(){ printPlane(plane,title); });
+    // contenitore vista 3D (riempito dallo script module Three.js)
+    const meta=plane.querySelector(".meta");
+    if(meta){
+      const v=document.createElement("div");
+      v.className="viewer3d";
+      v.dataset.type=({dardo:"dardo",aliante:"aliante",avanzato:"falco",nakamura:"nakamura"})[plane.id]||"dardo";
+      v.innerHTML='<span class="v3d-tag">🛩️ Vista 3D · aereo completo</span>'+
+                  '<span class="v3d-hint">Trascina per ruotare · rotella: zoom</span>'+
+                  '<span class="v3d-fallback">Vista 3D — caricamento…</span>';
+      meta.after(v);
+    }
   });
+  setTimeout(function(){
+    if(!window.__v3dReady) document.querySelectorAll(".v3d-fallback").forEach(function(f){
+      f.textContent="Vista 3D non disponibile (richiede una connessione a internet).";
+    });
+  },8000);
 
   /* ---------- tastiera ---------- */
   document.addEventListener("keydown",function(e){
@@ -882,6 +911,112 @@
     }
   });
 })();
+</script>
+
+<!-- ===== Vista 3D degli aerei completi (Three.js) ===== -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// proporzioni distintive per ogni modello (ricavate dalla forma finale)
+const PARAMS = {
+  dardo:    { span:1.00, nose:2.20, tail:0.80, dih:0.10, keel:0.46, tipFrac:0.70, winglet:0 },
+  aliante:  { span:1.70, nose:1.20, tail:1.00, dih:0.24, keel:0.32, tipFrac:0.55, winglet:0 },
+  falco:    { span:0.95, nose:2.00, tail:0.90, dih:0.08, keel:0.44, tipFrac:0.75, winglet:0.24 },
+  nakamura: { span:1.35, nose:1.50, tail:1.00, dih:0.16, keel:0.36, tipFrac:0.60, winglet:0 }
+};
+
+function buildPlane(p){
+  const g=new THREE.Group();
+  const nose=p.nose, tail=p.tail, span=p.span, dih=p.dih, keel=p.keel, tz=tail*p.tipFrac;
+  const N=[0,0,-nose], T=[0,0,tail], WR=[span,dih,tz], WL=[-span,dih,tz];
+  const Kf=[0,-keel,-nose*0.15], Kb=[0,-keel,tail];
+  const pos=[];
+  const tri=(a,b,c)=>{ pos.push(a[0],a[1],a[2], b[0],b[1],b[2], c[0],c[1],c[2]); };
+  tri(N,WR,T);   // ala destra
+  tri(N,T,WL);   // ala sinistra
+  tri(N,T,Kb);   // chiglia (fusoliera) 1
+  tri(N,Kb,Kf);  // chiglia 2
+  if(p.winglet){
+    [1,-1].forEach(s=>{
+      const tip=[s*span,dih,tz];
+      const back=[s*span,dih,tz+(tail-tz)*0.35];
+      const up=[s*span,dih+p.winglet,tz+(tail-tz)*0.10];
+      tri(tip,back,up);
+    });
+  }
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+  geo.computeVertexNormals();
+  const mat=new THREE.MeshStandardMaterial({ color:0xeaf0ff, roughness:0.92, metalness:0.0,
+    side:THREE.DoubleSide, flatShading:true });
+  g.add(new THREE.Mesh(geo,mat));
+  // linee di piega (richiamano i diagrammi)
+  const lp=[]; const ln=(a,b)=>{ lp.push(a[0],a[1],a[2], b[0],b[1],b[2]); };
+  ln(N,T); ln(N,WR); ln(WR,T); ln(N,WL); ln(WL,T); ln(N,Kf); ln(Kf,Kb); ln(Kb,T);
+  const lgeo=new THREE.BufferGeometry();
+  lgeo.setAttribute('position', new THREE.Float32BufferAttribute(lp,3));
+  g.add(new THREE.LineSegments(lgeo, new THREE.LineBasicMaterial({ color:0x4cc2ff, transparent:true, opacity:0.6 })));
+  return g;
+}
+
+const viewers=[];
+function initViewer(el, p){
+  if(!p) return;
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  const renderer=new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio||1));
+  el.appendChild(renderer.domElement);
+
+  scene.add(new THREE.HemisphereLight(0xdfe9ff, 0x2a3350, 1.15));
+  const d1=new THREE.DirectionalLight(0xffffff, 1.1); d1.position.set(2,4,3); scene.add(d1);
+  const d2=new THREE.DirectionalLight(0x88aaff, 0.4); d2.position.set(-3,-1,-2); scene.add(d2);
+
+  const plane=buildPlane(p); scene.add(plane);
+  const box=new THREE.Box3().setFromObject(plane);
+  const c=box.getCenter(new THREE.Vector3()); plane.position.sub(c);
+  plane.rotation.x=-0.06;
+  const size=box.getSize(new THREE.Vector3());
+  const maxDim=Math.max(size.x,size.y,size.z);
+
+  const controls=new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping=true; controls.dampingFactor=0.08; controls.enablePan=false;
+  controls.autoRotate=true; controls.autoRotateSpeed=1.6;
+  controls.minDistance=maxDim*1.15; controls.maxDistance=maxDim*4.5;
+  camera.position.set(maxDim*1.0, maxDim*0.62, maxDim*1.8);
+  controls.target.set(0,0,0); controls.update();
+
+  function resize(){
+    const w=el.clientWidth, h=el.clientHeight; if(!w||!h) return;
+    renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();
+  }
+  resize(); new ResizeObserver(resize).observe(el);
+
+  let t=null;
+  controls.addEventListener('start',()=>{ controls.autoRotate=false; if(t) clearTimeout(t); });
+  controls.addEventListener('end',()=>{ if(t) clearTimeout(t); t=setTimeout(()=>{controls.autoRotate=true;},2500); });
+
+  const v={ visible:true, render(){ controls.update(); renderer.render(scene,camera); } };
+  viewers.push(v);
+  new IntersectionObserver(es=>{ es.forEach(e=> v.visible=e.isIntersecting); },{threshold:0.04}).observe(el);
+
+  const fb=el.querySelector('.v3d-fallback'); if(fb) fb.remove();
+}
+
+function loop(){ requestAnimationFrame(loop); for(const v of viewers){ if(v.visible) v.render(); } }
+
+try {
+  document.querySelectorAll('.viewer3d').forEach(el=> initViewer(el, PARAMS[el.dataset.type]));
+  window.__v3dReady=true;
+  loop();
+} catch(err){ console.error('Errore init vista 3D:', err); }
 </script>
 
 </body>
