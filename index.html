@@ -6,16 +6,16 @@
 <title>Aeroplani di Carta · Guida al Volo</title>
 <style>
   :root{
-    --bg:#0f1724;
-    --bg2:#16213a;
-    --card:#1c2842;
-    --ink:#eaf0ff;
-    --muted:#9fb0d0;
-    --accent:#4cc2ff;
+    --bg:#18181a;
+    --bg2:#212124;
+    --card:#232326;
+    --ink:#edeced;
+    --muted:#888890;
+    --accent:#9b9bff;
     --accent2:#ffd166;
     --good:#6ee7a8;
-    --line:#2b3a5e;
-    --shadow:0 10px 30px rgba(0,0,0,.35);
+    --line:#35353a;
+    --shadow:0 8px 24px rgba(0,0,0,.4);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -23,104 +23,103 @@
     margin:0;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     color:var(--ink);
-    background:radial-gradient(1200px 600px at 80% -10%,#21314f 0%,transparent 60%),var(--bg);
+    background:var(--bg);
     line-height:1.6;
   }
-  header.hero{padding:64px 24px 48px;text-align:center;position:relative;overflow:hidden}
-  .hero h1{font-size:clamp(2rem,5vw,3.4rem);margin:0 0 12px;letter-spacing:-.02em}
-  .hero p{color:var(--muted);max-width:640px;margin:0 auto;font-size:1.1rem}
-  .plane-emoji{font-size:3rem;display:block;margin-bottom:8px;animation:fly 6s ease-in-out infinite}
+  header.hero{padding:56px 24px 40px;text-align:center;position:relative;overflow:hidden}
+  .hero h1{font-size:clamp(1.9rem,5vw,3.2rem);margin:0 0 12px;letter-spacing:-.02em;font-family:Georgia,'Times New Roman',serif;font-weight:400}
+  .hero p{color:var(--muted);max-width:640px;margin:0 auto;font-size:1.05rem}
+  .plane-icon{display:block;margin:0 auto 14px;animation:fly 6s ease-in-out infinite}
   @keyframes fly{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(4deg)}}
   .wrap{max-width:980px;margin:0 auto;padding:0 20px 80px}
 
-  nav.toc{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px auto 40px;max-width:760px}
-  nav.toc a{text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:8px 16px;border-radius:999px;font-size:.92rem;transition:.2s}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px auto 40px;max-width:760px}
+  nav.toc a{text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:7px 14px;border-radius:4px;font-size:.9rem;transition:.2s}
   nav.toc a:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
 
-  .principles{background:linear-gradient(135deg,var(--bg2),var(--card));border:1px solid var(--line);border-radius:18px;padding:28px;margin-bottom:48px;box-shadow:var(--shadow)}
+  .principles{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:24px;margin-bottom:40px;box-shadow:var(--shadow)}
   .principles h2{margin-top:0}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:18px}
-  .tip{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px}
+  .tip{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:4px;padding:14px}
   .tip b{color:var(--accent2)}
 
   .legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;font-size:.9rem;color:var(--muted)}
   .legend span{display:inline-flex;align-items:center;gap:8px}
   .swatch{width:26px;height:0;border-top-width:3px;border-top-style:solid;display:inline-block}
 
-  .plane{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px;margin-bottom:40px;box-shadow:var(--shadow);scroll-margin-top:20px}
-  .plane-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:6px}
-  .plane-head h2{margin:0;font-size:1.7rem}
-  .badge{font-size:.78rem;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
-  .badge.easy{color:var(--good);border-color:rgba(110,231,168,.4)}
-  .badge.medium{color:var(--accent2);border-color:rgba(255,209,102,.4)}
-  .badge.hard{color:#ff8e8e;border-color:rgba(255,142,142,.4)}
-  .subtitle{color:var(--muted);margin:0 0 20px}
+  .plane{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:28px;margin-bottom:32px;box-shadow:var(--shadow);scroll-margin-top:20px}
+  .plane-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+  .plane-head h2{margin:0;font-size:1.6rem}
+  .badge{font-size:.78rem;padding:3px 10px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+  .badge.easy{color:var(--good);border-color:rgba(110,231,168,.35)}
+  .badge.medium{color:var(--accent2);border-color:rgba(255,209,102,.35)}
+  .badge.hard{color:#ff8e8e;border-color:rgba(255,142,142,.35)}
+  .subtitle{color:var(--muted);margin:0 0 18px}
 
-  .meta{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:22px;font-size:.92rem;color:var(--muted)}
+  .meta{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:20px;font-size:.92rem;color:var(--muted)}
   .meta span b{color:var(--ink)}
 
-  /* stili del grafico "Traiettorie a confronto" */
-  .ref{stroke:#6f83ab;stroke-width:1;stroke-dasharray:2 3;fill:none}
-  .lbl{fill:#9fb0d0;font-size:9px;font-family:sans-serif}
+  .ref{stroke:#555560;stroke-width:1;stroke-dasharray:2 3;fill:none}
+  .lbl{fill:#888890;font-size:9px;font-family:sans-serif}
 
-  .tuning{margin-top:22px;padding:18px;border-radius:12px;background:rgba(76,194,255,.08);border:1px solid rgba(76,194,255,.25)}
+  .tuning{margin-top:20px;padding:16px;border-radius:4px;background:rgba(155,155,255,.07);border:1px solid rgba(155,155,255,.2)}
   .tuning h4{margin:0 0 8px;color:var(--accent)}
   .tuning ul{margin:0;padding-left:20px}
 
-  .launch{background:linear-gradient(135deg,#1a2a1f,#16291d);border:1px solid rgba(110,231,168,.3);border-radius:18px;padding:28px;margin-bottom:48px}
-  .launch h2{margin-top:0;color:var(--good)}
+  .launch{background:var(--card);border:1px solid rgba(155,155,255,.2);border-radius:6px;padding:24px;margin-bottom:40px}
+  .launch h2{margin-top:0;color:var(--accent)}
 
-  footer{text-align:center;color:var(--muted);padding:30px;font-size:.9rem;border-top:1px solid var(--line)}
+  footer{text-align:center;color:var(--muted);padding:28px;font-size:.9rem;border-top:1px solid var(--line)}
   a.top{color:var(--accent);text-decoration:none}
 
   @media(max-width:560px){
-    .plane{padding:20px}
+    .plane{padding:18px}
   }
 
   /* ---- pulsanti azione per aeroplano ---- */
-  .plane-actions{display:flex;flex-wrap:wrap;gap:12px;margin:2px 0 24px}
+  .plane-actions{display:flex;flex-wrap:wrap;gap:10px;margin:2px 0 22px}
   .btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font:inherit;font-size:.95rem;
-    padding:11px 18px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);transition:.2s}
+    padding:10px 16px;border-radius:6px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);transition:.2s}
   .btn:hover{border-color:var(--accent);transform:translateY(-2px)}
-  .btn.primary{background:linear-gradient(135deg,#1e6fa8,#2f9bd6);border-color:transparent;color:#fff}
+  .btn.primary{background:var(--accent);border-color:transparent;color:#18181a;font-weight:600}
   .btn.primary:hover{filter:brightness(1.08)}
 
   /* ---- overlay procedura guidata ---- */
-  .overlay{position:fixed;inset:0;z-index:1000;background:#0a1020;display:flex;flex-direction:column;color:var(--ink)}
+  .overlay{position:fixed;inset:0;z-index:1000;background:#18181a;display:flex;flex-direction:column;color:var(--ink)}
   .overlay[hidden]{display:none}
-  .ov-top{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--line)}
-  .ov-top .t{font-weight:700;font-size:1.15rem}
-  .ov-top .c{color:var(--muted);font-size:.95rem}
+  .ov-top{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .ov-top .t{font-weight:600;font-size:1.1rem}
+  .ov-top .c{color:var(--muted);font-size:.92rem}
   .ov-spacer{flex:1}
   .ov-close{cursor:pointer;background:var(--card);border:1px solid var(--line);color:var(--ink);
-    width:42px;height:42px;border-radius:12px;font-size:1.1rem}
+    width:40px;height:40px;border-radius:6px;font-size:1.1rem}
   .ov-close:hover{border-color:#ff8e8e;color:#ff8e8e}
 
-  .guide-text{padding:18px 24px;font-size:1.15rem;line-height:1.55;text-align:center;max-width:800px;margin:0 auto}
-  .guide-nav{display:flex;align-items:center;gap:16px;padding:14px 20px 24px;justify-content:center;flex-wrap:wrap}
+  .guide-text{padding:16px 22px;font-size:1.1rem;line-height:1.55;text-align:center;max-width:800px;margin:0 auto}
+  .guide-nav{display:flex;align-items:center;gap:14px;padding:12px 18px 22px;justify-content:center;flex-wrap:wrap}
   .dots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:46vw}
-  .dot{width:11px;height:11px;border-radius:50%;background:var(--line);cursor:pointer;border:none;padding:0;transition:.15s}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--line);cursor:pointer;border:none;padding:0;transition:.15s}
   .dot.on{background:var(--accent);transform:scale(1.25)}
-  .nav-btn{cursor:pointer;font:inherit;padding:12px 22px;border-radius:12px;border:1px solid var(--line);
+  .nav-btn{cursor:pointer;font:inherit;padding:10px 20px;border-radius:6px;border:1px solid var(--line);
     background:var(--card);color:var(--ink);font-size:1rem}
   .nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
   .nav-btn:disabled{opacity:.35;cursor:default}
-  .nav-btn.primary{background:var(--accent);color:#06223a;border-color:transparent;font-weight:700}
+  .nav-btn.primary{background:var(--accent);color:#18181a;border-color:transparent;font-weight:600}
 
   @media(max-width:560px){
     .dots{max-width:62vw}
-    .guide-text{font-size:1.05rem;padding:14px 16px}
+    .guide-text{font-size:1rem;padding:12px 14px}
   }
 
   /* ---- visualizzatore 3D ---- */
-  .viewer3d{position:relative;width:100%;height:320px;margin:4px 0 24px;border:1px solid var(--line);
-    border-radius:16px;overflow:hidden;cursor:grab;
-    background:radial-gradient(130% 130% at 50% 0%,#16264a 0%,#0e1830 60%)}
+  .viewer3d{position:relative;width:100%;height:320px;margin:4px 0 22px;border:1px solid var(--line);
+    border-radius:6px;overflow:hidden;cursor:grab;
+    background:radial-gradient(130% 130% at 50% 0%,#28282e 0%,#18181a 60%)}
   .viewer3d:active{cursor:grabbing}
   .viewer3d canvas{display:block;width:100%;height:100%;touch-action:none}
-  .viewer3d .v3d-tag{position:absolute;left:14px;top:12px;color:var(--accent);font-size:.8rem;
-    border:1px solid var(--line);padding:4px 12px;border-radius:999px;background:rgba(14,24,48,.7);pointer-events:none}
-  .viewer3d .v3d-hint{position:absolute;right:14px;bottom:12px;color:var(--muted);font-size:.82rem;pointer-events:none}
+  .viewer3d .v3d-tag{position:absolute;left:12px;top:10px;color:var(--accent);font-size:.78rem;
+    border:1px solid var(--line);padding:3px 10px;border-radius:4px;background:rgba(24,24,26,.78);pointer-events:none}
+  .viewer3d .v3d-hint{position:absolute;right:12px;bottom:10px;color:var(--muted);font-size:.8rem;pointer-events:none}
   .viewer3d .v3d-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     color:var(--muted);text-align:center;padding:24px;font-size:.92rem}
   @media(max-width:560px){ .viewer3d{height:240px} }
@@ -128,16 +127,16 @@
   /* ---- pannello pieghe 3D dentro la procedura guidata ---- */
   .guide-body{display:flex;flex:1;min-height:0}
   .fold3d{position:relative;flex:1 1 auto;min-width:0;
-    background:radial-gradient(130% 130% at 50% 0%,#16264a 0%,#0e1830 60%)}
+    background:radial-gradient(130% 130% at 50% 0%,#28282e 0%,#18181a 60%)}
   .fold3d canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
   .fold3d canvas:active{cursor:grabbing}
-  .fold3d .f3-tag{position:absolute;left:14px;top:12px;color:var(--accent);font-size:.8rem;
-    border:1px solid var(--line);padding:4px 12px;border-radius:999px;background:rgba(14,24,48,.7);pointer-events:none}
-  .fold3d .f3-hint{position:absolute;left:14px;bottom:12px;color:var(--muted);font-size:.8rem;pointer-events:none;max-width:60%}
-  .fold3d .f3-controls{position:absolute;right:14px;top:12px;z-index:2;display:flex;gap:8px}
-  .fold3d .f3-btn{cursor:pointer;font:inherit;font-size:.82rem;
-    display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:999px;
-    border:1px solid var(--line);background:rgba(14,24,48,.78);color:var(--ink);transition:.15s}
+  .fold3d .f3-tag{position:absolute;left:12px;top:10px;color:var(--accent);font-size:.78rem;
+    border:1px solid var(--line);padding:3px 10px;border-radius:4px;background:rgba(24,24,26,.78);pointer-events:none}
+  .fold3d .f3-hint{position:absolute;left:12px;bottom:10px;color:var(--muted);font-size:.78rem;pointer-events:none;max-width:60%}
+  .fold3d .f3-controls{position:absolute;right:12px;top:10px;z-index:2;display:flex;gap:8px}
+  .fold3d .f3-btn{cursor:pointer;font:inherit;font-size:.8rem;
+    display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;
+    border:1px solid var(--line);background:rgba(24,24,26,.8);color:var(--ink);transition:.15s}
   .fold3d .f3-btn:hover{border-color:var(--accent);color:var(--accent)}
   .fold3d .f3-btn:active{transform:scale(.96)}
   .fold3d .f3-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
@@ -178,7 +177,9 @@
 <body>
 
 <header class="hero">
-  <span class="plane-emoji">🪶</span>
+  <svg class="plane-icon" width="44" height="44" viewBox="0 0 31.27 31.27" fill="#9b9bff" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M27.338,3.713l-5.316,22.166l-8.651-5.492l9.699-11.854L9.456,17.781l-4.45-2.882L27.338,3.713 M30.285,0L0.984,14.678 l8.174,5.128l3.749,11.464l4.789-5.779l5.616,3.586L30.285,0L30.285,0z"/>
+  </svg>
   <h1>Aeroplani di Carta che Volano Lontano</h1>
   <p>Guida pratica e illustrata, passo dopo passo: quattro modelli collaudati con un diagramma per ogni piega, dal più semplice al più tecnico.</p>
 </header>
@@ -196,7 +197,7 @@
   </nav>
 
   <section class="principles" id="principi">
-    <h2>🪶 I principi per volare lontano</h2>
+    <h2>I principi per volare lontano</h2>
     <p>Prima di piegare, capisci cosa tiene un aereo in aria. Questi fattori decidono se il tuo aereo plana o si schianta.</p>
     <div class="grid">
       <div class="tip"><b>Simmetria</b><br>Le due ali devono essere identiche. Allinea i bordi al millimetro: un'ala più grande fa girare l'aereo.</div>
@@ -293,7 +294,7 @@
     </div>
     <p class="subtitle">Stesso punto di lancio, quattro profili di volo diversi. Guarda altezza e distanza per capire quale modello fa al caso tuo.</p>
 
-    <svg viewBox="0 0 820 400" role="img" style="width:100%;height:auto;background:#0e1830;border:1px solid var(--line);border-radius:14px">
+    <svg viewBox="0 0 820 400" role="img" style="width:100%;height:auto;background:#1a1a1e;border:1px solid var(--line);border-radius:6px">
       <title>Confronto delle traiettorie di volo dei quattro aeroplani</title>
       <desc>Grafico altezza-distanza: il Falco vola più lontano e alto, l'Aliante resta in aria più a lungo planando dolce, il Dardo è teso e veloce, il Nakamura è equilibrato.</desc>
 
@@ -351,7 +352,7 @@
 
   <!-- ============ LANCIO ============ -->
   <section class="launch" id="lancio">
-    <h2>🚀 La tecnica di lancio (conta quanto le pieghe)</h2>
+    <h2>La tecnica di lancio (conta quanto le pieghe)</h2>
     <div class="grid">
       <div class="tip"><b>Presa</b><br>Tieni l'aereo <b>sotto le ali</b>, vicino al baricentro (appena dietro il muso). Pollice e indice, presa salda ma non schiacciante.</div>
       <div class="tip"><b>Angolo</b><br>Punta leggermente <b>verso l'alto (15-40°)</b>. Mai verso il basso. Più forte lanci, più puoi alzare l'angolo.</div>
@@ -368,7 +369,7 @@
 </div>
 
 <footer>
-  🪶 Buoni voli! Stampa un foglio A4, segui i diagrammi e cronometra i tuoi record.
+  Buoni voli. Stampa un foglio A4, segui i diagrammi e cronometra i tuoi record.
 </footer>
 
 <!-- ===== Overlay: procedura guidata a schermo intero ===== -->
