@@ -111,6 +111,21 @@
     .guide-text{font-size:1rem;padding:12px 14px}
   }
 
+  /* ---- invito a ruotare in verticale (fallback per iOS, dove il lock non è supportato) ---- */
+  .rotate-hint{display:none}
+  @media (orientation:landscape) and (max-height:560px){
+    .overlay .guide-body,
+    .overlay .guide-text,
+    .overlay .guide-nav,
+    .overlay .ov-top{display:none}
+    .overlay .rotate-hint{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:18px;flex:1;text-align:center;padding:24px;color:var(--ink)}
+    .rotate-hint .ico{font-size:3rem;line-height:1;animation:rot-tip 2.2s ease-in-out infinite}
+    .rotate-hint p{margin:0;font-size:1.1rem;max-width:420px;line-height:1.5;color:var(--muted)}
+  }
+  @keyframes rot-tip{0%,55%{transform:rotate(0)}75%,100%{transform:rotate(-90deg)}}
+
   /* ---- visualizzatore 3D ---- */
   .viewer3d{position:relative;width:100%;height:320px;margin:4px 0 22px;border:1px solid var(--line);
     border-radius:6px;overflow:hidden;cursor:grab;
@@ -380,6 +395,10 @@
     <span class="ov-spacer"></span>
     <button class="ov-close" id="gClose" aria-label="Chiudi">✕</button>
   </div>
+  <div class="rotate-hint">
+    <span class="ico">📱</span>
+    <p>Ruota il telefono in <b>verticale</b> per vedere il modello 3D durante la procedura guidata.</p>
+  </div>
   <div class="guide-body">
     <div class="fold3d" id="gFold3d">
       <span class="f3-tag">🧩 Pieghe 3D animate</span>
@@ -486,11 +505,24 @@
       gDots.appendChild(b);
     });
     show(guide);
-    if(guide.requestFullscreen) guide.requestFullscreen().catch(function(){});
+    if(guide.requestFullscreen){
+      guide.requestFullscreen().then(lockPortrait,lockPortrait);
+    } else {
+      lockPortrait();
+    }
     if(window.FoldAnim) try{ window.FoldAnim.open(curPlaneType, steps.length); }catch(_){}
     render();
   }
+  // Forza l'orientamento verticale: in orizzontale il modello 3D non si vede.
+  function lockPortrait(){
+    try{
+      if(screen.orientation && screen.orientation.lock){
+        screen.orientation.lock("portrait").catch(function(){});
+      }
+    }catch(_){}
+  }
   function closeGuide(){
+    try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(_){}
     if(document.fullscreenElement) document.exitFullscreen().catch(function(){});
     hide(guide);
     if(window.FoldAnim) try{ window.FoldAnim.close(); }catch(_){}
